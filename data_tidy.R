@@ -20,18 +20,19 @@ library("readxl")
 setwd(
   "C:\\Users\\li.chao.987@s.kyushu-u.ac.jp\\OneDrive - Kyushu University\\05_Article\\"
 )
-deat.conf.pop <- COVID19::covid19(country = "USA", level = 3) %>% filter(date == ymd("2021-04-15"))
+deat.conf.pop <- COVID19::covid19(country = "USA", level = 3) %>% filter(date == ymd("2021-10-01"))
 deat.conf.pop <- deat.conf.pop %>% filter(administrative_area_level_2 != "Puerto Rico")
 deat.conf.pop <- deat.conf.pop %>% select(confirmed, deaths, population, key_numeric)
 
 deat.conf.pop <- deat.conf.pop %>%
   mutate(
-    CFR = deaths / confirmed * 100,
-    incidence_proportion = confirmed / population * 100
+    CFR = deaths / confirmed * 100, # percentage
+    incidence_proportion = confirmed / population * 1000, # infection per 1000
+    mortality = deaths / population * 1000 # mortality per 1000
          )
 
 restrictions <- COVID19::covid19(country = "USA", level = 3) %>% 
-  filter(date < ymd("2021-04-16")) %>%
+  filter(date < ymd("2021-09-01")) %>%
   filter(administrative_area_level_2 != "Puerto Rico")
 
 restrictions <- restrictions %>%
@@ -103,7 +104,7 @@ dataset <- dataset %>%
       Cultivated_Crops + Woody_Wetlands + Emergent_Herbaceous_Wetlands +
       Dward_Scrub + Sedge + Moss
   )
-switch <- F
+switch <- T
 if(switch == T){
   dataset <- dataset %>%
     mutate(
@@ -395,4 +396,8 @@ dataset <- left_join(dataset, pm2.5)
 rm(pm2.5)
 # PM2.5 https://github.com/wxwx1993/PM_COVID/tree/master/Data
 
-save.image("03_RProject\\REV0421\\dataset.Rdata")
+rm(covid.data)
+rm(LC30_2016)
+dataset <- dataset %>%
+  mutate(pop_density = population / TotalArea * 1000000)
+#save.image("03_RProject\\REV0901\\dataset.Rdata")
