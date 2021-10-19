@@ -8,7 +8,7 @@ library(stargazer)
 library(parallel)
 library(tmap)
 
-variables.in.reg.form = c("Open_Water_capi","Perenial_Ice_capi",
+variables.in.reg.form = c("Open_Water_capi",
                           "Developed_Open_Space_capi","Developed_Low_Intensity_capi",
                           "Developed_Medium_Intensity_capi",
                           "Developed_High_Intensity_capi","Barren_Land_capi","Deciduous_Forest_capi",
@@ -97,21 +97,19 @@ rse.mort.14 <- rse.mort.bptest(ols.reg.mort(14))
 model.mort.15 <- ols.reg.mort(15) 
 rse.mort.15 <- rse.mort.bptest(ols.reg.mort(15))
 
-model.mort.16 <- ols.reg.mort(16) 
-rse.mort.16 <- rse.mort.bptest(ols.reg.mort(16))
 
 stargazer(model.mort.1, model.mort.2, model.mort.3, model.mort.4, model.mort.5, 
           model.mort.6, model.mort.7, model.mort.8,model.mort.9, model.mort.10, 
           model.mort.11, model.mort.12, model.mort.13, model.mort.14, 
-          model.mort.15,model.mort.16,
+          model.mort.15,
           title = "Table XXX: Test",  type = "text", 
           se = list(rse.mort.1, rse.mort.2, rse.mort.3, rse.mort.4, rse.mort.5, 
                     rse.mort.6, rse.mort.7, rse.mort.8,rse.mort.9, rse.mort.10, 
                     rse.mort.11, rse.mort.12, rse.mort.13, rse.mort.14, 
-                    rse.mort.15, rse.mort.16),
+                    rse.mort.15),
           no.space = T,
           covariate.labels = c(
-            'Open Water (hm2/cap)', "Perenial Ice (hm2/cap)",
+            'Open Water (hm2/cap)', 
             'Open Space Developed Area (hm2/cap)',                   
             "Low Intensity Developed Area (hm2/cap)",
             "Medium Intensity Developed Area (hm2/cap)",
@@ -160,7 +158,7 @@ reg.form.pr <- function(vari_name){
   poor_health_rate_2019 + poor_physical_days_2019 + poor_mental_days_2019 +
   smoker_rate_2019 + obesity_rate_2019 + physical_inactivity_2019 +
   exercise_opportunities_rate_2019 +
-  hospital_beds + summer_tmmx_mean + winter_tmmx_mean + summer_rmax_mean +
+  hospital_beds_per_1000 + summer_tmmx_mean + winter_tmmx_mean + summer_rmax_mean +
   winter_rmax_mean + pm25_mean") %>% as.formula()
   return(func)
 }
@@ -228,19 +226,17 @@ rse.pr.14 <- rse.pr.bptest(ols.reg.pr(14))
 model.pr.15 <- ols.reg.pr(15) 
 rse.pr.15 <- rse.pr.bptest(ols.reg.pr(15))
 
-model.pr.16 <- ols.reg.pr(16) 
-rse.pr.16 <- rse.pr.bptest(ols.reg.pr(16))
 
 stargazer(model.pr.1, model.pr.2, model.pr.3, model.pr.4, model.pr.5, model.pr.6,
           model.pr.7, model.pr.8, model.pr.9, model.pr.10, model.pr.11,
-          model.pr.12, model.pr.13, model.pr.14, model.pr.15, model.pr.16,
+          model.pr.12, model.pr.13, model.pr.14, model.pr.15, 
           title = "Table XXX: Test",  type = "text", 
           se = list(rse.pr.1, rse.pr.2, rse.pr.3, rse.pr.4, rse.pr.5, rse.pr.6,
                     rse.pr.7, rse.pr.8, rse.pr.9, rse.pr.10, rse.pr.11,
-                    rse.pr.12, rse.pr.13, rse.pr.14, rse.pr.15, rse.pr.16),
+                    rse.pr.12, rse.pr.13, rse.pr.14, rse.pr.15),
           no.space = T,
           covariate.labels = c(
-            'Open Water (hm2/cap)', "Perenial Ice (hm2/cap)",
+            'Open Water (hm2/cap)', 
             'Open Space Developed Area (hm2/cap)',                   
             "Low Intensity Developed Area (hm2/cap)",
             "Medium Intensity Developed Area (hm2/cap)",
@@ -278,7 +274,7 @@ save.image("00_Rdata\\Regression.Rdata")
 # Moran I Test
 setwd("C:\\Users\\li.chao.987@s.kyushu-u.ac.jp\\OneDrive - Kyushu University\\05_Article\\01_Raster\\cb_2017_us_county_20m\\")
 tes <- dataset %>%
-  dplyr::select("Open_Water_capi","Perenial_Ice_capi",
+  dplyr::select("Open_Water_capi",
                 "Developed_Open_Space_capi","Developed_Low_Intensity_capi",
                 "Developed_Medium_Intensity_capi",
                 "Developed_High_Intensity_capi","Barren_Land_capi","Deciduous_Forest_capi",
@@ -298,7 +294,8 @@ tes <- dataset %>%
                 hospital_beds, summer_tmmx_mean, winter_tmmx_mean, summer_rmax_mean,
                 winter_rmax_mean, pm25_mean, key_numeric
   ) %>% na.omit()
-us_shape <- readOGR(dsn = ".", layer = "cb_2017_us_county_20m84")
+us_shape <- readOGR(dsn = ".", 
+                    layer = "C:\\Users\\li.chao.987@s.kyushu-u.ac.jp\\OneDrive - Kyushu University\\05_Article\\01_Raster\\cb_2017_us_county_20m\\cb_2017_us_county_20m84")
 us_shape <- geo_join(us_shape, tes, 'CountyFIPS', 'key_numeric', how = 'inner')
 plot(us_shape)
 rm(tes)
