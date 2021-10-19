@@ -17,12 +17,12 @@ library(foreign)
 library(olsrr)
 library("readxl")
 
-setwd(
-  "C:\\Users\\li.chao.987@s.kyushu-u.ac.jp\\OneDrive - Kyushu University\\05_Article\\"
-)
+
 deat.conf.pop <- COVID19::covid19(country = "USA", level = 3) %>% filter(date == ymd("2021-10-15"))
 deat.conf.pop <- deat.conf.pop %>% filter(administrative_area_level_2 != "Puerto Rico")
-deat.conf.pop <- deat.conf.pop %>% select(confirmed, deaths, population, key_numeric)
+deat.conf.pop <- deat.conf.pop %>% select(confirmed, deaths, population, key_local)
+deat.conf.pop <- deat.conf.pop %>% rename(key_numeric = key_local)
+deat.conf.pop$key_numeric <- deat.conf.pop$key_numeric %>% as.numeric()
 
 deat.conf.pop <- deat.conf.pop %>%
   mutate(
@@ -32,7 +32,7 @@ deat.conf.pop <- deat.conf.pop %>%
          )
 
 restrictions <- COVID19::covid19(country = "USA", level = 3) %>% 
-  filter(date < ymd("2021-09-01")) %>%
+  filter(date < ymd("2021-10-15")) %>%
   filter(administrative_area_level_2 != "Puerto Rico")
 
 restrictions <- restrictions %>%
@@ -298,11 +298,13 @@ hospital_bed <- hospital_bed %>%
   rename(
     key_numeric = Group.1
   )
-hospital_bed$hospital_beds <- hospital_bed$hospital_beds / 100
 dataset <- left_join(dataset, hospital_bed)
+dataset$hospital_beds_per_1000 <- dataset$hospital_beds/dataset$population*1000
+#https://www.kff.org/health-costs/press-release/the-u-s-has-fewer-physicians-and-hospital-beds-per-capita-than-italy-and-other-countries-overwhelmed-by-covid-19/
+# 2.8 beds per 1000
 rm(hospital_bed)
 dataset <- dataset %>%
-  mutate(hospital_beds = ifelse(is.na(hospital_beds), 0, hospital_beds))
+  mutate(hospital_beds_per_1000 = ifelse(is.na(hospital_beds_per_1000), 0, hospital_beds_per_1000))
 # hospital bed https://hifld-geoplatform.opendata.arcgis.com/datasets/hospitals/data
 
 
@@ -400,4 +402,4 @@ rm(covid.data)
 rm(LC30_2016)
 dataset <- dataset %>%
   mutate(pop_density = population / TotalArea * 1000000)
-#save.image("03_RProject\\REV0901\\dataset.Rdata")
+save.image("00_RData\\dataset.Rdata")
