@@ -90,6 +90,8 @@ gc()
 
 save.image("00_RData\\panel_monthly_dcp.Rdata")
 
+
+
 #test code
 merge_df.pd <- pdata.frame(merge_df, index = c("id", "date"))
 

@@ -106,7 +106,7 @@ tif.list <- list()
 for (raster.date in raster.dates){
   tif.name.used <- c()
   for (tif.name in filelist.tif){
-    if (raster.date == str_sub(tif.name, 21, 28)){
+    if (raster.date == str_sub(tif.name, 23, 30)){
       tif.name.used <- append(tif.name.used, tif.name)
     }
   }
@@ -128,3 +128,10 @@ while (i < (length(raster.dates) + 1)){
 }
 rm(tif.list)
 gc()
+
+NDVI.data$type <- "NDVI"
+NightTemperature.data$type <- "NigTem"
+DayTemperature.data$type <- "DayTem"
+
+panel_mod <- rbind(NDVI.data, NightTemperature.data, DayTemperature.data)
+panel_mod %>% write.csv("02_RawData\\panel_mod.csv")
