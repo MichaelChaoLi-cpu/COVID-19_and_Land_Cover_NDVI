@@ -52,7 +52,7 @@ sub.Dataset <- function(dataset, input_date){
       dplyr::select(id, o.con, o.deaths, x)
   }
   dataset.output$date <- ymd(base_month)
-  colnames(dataset.output) <- c("id", "confirmed_perc", "deaths_perc", 
+  colnames(dataset.output) <- c("id", "confirmed", "deaths", 
                                 "stringency_index", "date")
   return(dataset.output)
 }
@@ -94,11 +94,11 @@ rm(deat.conf.pop.202003, deat.conf.pop.202004, deat.conf.pop.202005,
 gc()
 
 dataset.id <- deat.conf.pop %>% filter(date == ymd("2021-08-01"))
-dataset.id <- dataset.id %>% dplyr::select(id, key_local) %>% as.data.frame()
+dataset.id <- dataset.id %>% dplyr::select(id, key_local, population) %>% as.data.frame()
 merge_df <- left_join(merge_df, dataset.id)
 rm(dataset.id)
-merge_df <- merge_df %>% filter(confirmed_perc > -1) %>%
-  filter(deaths_perc > -1)
+merge_df <- merge_df %>% filter(confirmed > -1) %>%
+  filter(deaths > -1)
 merge_df <- merge_df %>% as.data.frame()
 merge_df <- merge_df %>% rename(GEOID = key_local)
 merge_df$GEOID <- merge_df$GEOID %>% as.numeric()
@@ -144,19 +144,20 @@ Tem.panel <- Tem.panel %>% dplyr::select("GEOID", "date", "tem")
 #Tem.panel$NDVI <- Tem.panel$NDVI / 10000
 merge_df <- left_join(merge_df, Tem.panel, by = c("GEOID", "date"))
 rm(Tem.panel)
+rm(NDVI.temper.panel)
 
 
 
 #test code
 merge_df.pd <- pdata.frame(merge_df, index = c("GEOID", "date"))
 
-test.ols <- plm(deaths_perc ~ confirmed_perc + stringency_index + NDVI + tem,
+test.ols <- plm(deaths_perc ~ confirmed_perc + stringency_index + NDVI + tem + lag(deaths_perc) + lag(confirmed_perc),
                 data = merge_df.pd, model = "pooling") 
 summary(test.ols)
-test.fe <- plm(deaths_perc ~ confirmed_perc + stringency_index + NDVI + tem, 
+test.fe <- plm(deaths_perc ~ confirmed_perc + stringency_index + NDVI + tem + lag(deaths_perc), 
                data = merge_df.pd, model = "within")
 summary(test.fe)
-test.re <- plm(deaths_perc ~ confirmed_perc + stringency_index + NDVI + tem, 
+test.re <- plm(deaths_perc ~ confirmed_perc + stringency_index + NDVI + tem + lag(deaths_perc), 
                data = merge_df.pd, model = "random")
 summary(test.re)
 
