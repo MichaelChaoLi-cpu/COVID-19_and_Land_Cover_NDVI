@@ -3,6 +3,7 @@ library(tidyverse)
 library("dplyr")
 library(lubridate)
 library(plm)
+library(stringr)
 
 deat.conf.pop <- COVID19::covid19(country = "USA", level = 3)
 
@@ -23,8 +24,10 @@ sub.Dataset <- function(dataset, input_date){
       mutate(confirmed = ifelse(is.na(confirmed), 0, confirmed),
              deaths = ifelse(is.na(deaths), 0, deaths)) 
     dataset.output <- dataset.output %>%
-      mutate(o.con = (ori_con - confirmed)/population,
-             o.deaths = (ori_deaths - deaths)/population) 
+      mutate(o.con = (ori_con - confirmed),
+             o.deaths = (ori_deaths - deaths)) 
+#      mutate(o.con = (ori_con - confirmed)/population,
+#             o.deaths = (ori_deaths - deaths)/population) 
     stringency <- dataset %>% filter(date > ymd(base_month)) %>%
       filter(date < ymd(input_date)) %>%
       dplyr::select(id, stringency_index)
@@ -36,8 +39,10 @@ sub.Dataset <- function(dataset, input_date){
       
   } else {
     dataset.output <- dataset.output %>%
-      mutate(o.con = ori_con/population,
-             o.deaths = ori_deaths/population)
+      mutate(o.con = ori_con,
+             o.deaths = ori_deaths)
+#      mutate(o.con = ori_con/population,
+#             o.deaths = ori_deaths/population)
     stringency <- dataset %>% filter(date < ymd(input_date)) %>%
       dplyr::select(id, stringency_index)
     stringency <- stringency$stringency_index %>% 
@@ -88,18 +93,71 @@ rm(deat.conf.pop.202003, deat.conf.pop.202004, deat.conf.pop.202005,
    deat.conf.pop.202109)
 gc()
 
+dataset.id <- deat.conf.pop %>% filter(date == ymd("2021-08-01"))
+dataset.id <- dataset.id %>% dplyr::select(id, key_local) %>% as.data.frame()
+merge_df <- left_join(merge_df, dataset.id)
+rm(dataset.id)
+merge_df <- merge_df %>% filter(confirmed_perc > -1) %>%
+  filter(deaths_perc > -1)
+merge_df <- merge_df %>% as.data.frame()
+merge_df <- merge_df %>% rename(GEOID = key_local)
+merge_df$GEOID <- merge_df$GEOID %>% as.numeric()
 save.image("00_RData\\panel_monthly_dcp.Rdata")
+
+NDVI.temper.panel <- read.csv("02_RawData\\panel_mod.csv")
+NDVI.panel <- NDVI.temper.panel %>%
+  filter(type == "NDVI") %>%
+  dplyr::select(-X, -type)
+NDVI.panel <- NDVI.panel %>%
+  pivot_longer(cols = D2020_001:D2021_244, names_to = "date", values_to = "NDVI")
+NDVI.panel <- NDVI.panel %>%
+  mutate(year = str_sub(date, 2, 5),
+         day = str_sub(date, 7, 9)) 
+NDVI.panel$day <- NDVI.panel$day %>% as.numeric()
+NDVI.panel$date <- as.Date((NDVI.panel$day - 1), origin = paste0(NDVI.panel$year,"-01-01"))
+NDVI.panel <- NDVI.panel %>% dplyr::select("GEOID", "date", "NDVI")
+NDVI.panel$NDVI <- NDVI.panel$NDVI / 10000
+merge_df <- left_join(merge_df, NDVI.panel, by = c("GEOID", "date"))
+rm(NDVI.panel)
+
+DayTem.panel <- NDVI.temper.panel %>%
+  filter(type == "DayTem") %>%
+  dplyr::select(-X, -type)
+DayTem.panel <- DayTem.panel %>%
+  pivot_longer(cols = D2020_001:D2021_244, names_to = "date", values_to = "DayTem")
+NigTem.panel <- NDVI.temper.panel %>%
+  filter(type == "NigTem") %>%
+  dplyr::select(-X, -type)
+NigTem.panel <- NigTem.panel %>%
+  pivot_longer(cols = D2020_001:D2021_244, names_to = "date", values_to = "NigTem")
+Tem.panel <- left_join(DayTem.panel, NigTem.panel, by = c("GEOID", "date"))
+rm(DayTem.panel, NigTem.panel)
+Tem.panel$tem <- (Tem.panel$DayTem + Tem.panel$NigTem)/2 
+Tem.panel <- Tem.panel %>% 
+  dplyr::select(-DayTem, -NigTem)
+Tem.panel <- Tem.panel %>% 
+  mutate(year = str_sub(date, 2, 5),
+         day = str_sub(date, 7, 9)) 
+Tem.panel$day <- Tem.panel$day %>% as.numeric()
+Tem.panel$date <- as.Date((Tem.panel$day - 1), origin = paste0(Tem.panel$year,"-01-01"))
+Tem.panel <- Tem.panel %>% dplyr::select("GEOID", "date", "tem")
+#Tem.panel$NDVI <- Tem.panel$NDVI / 10000
+merge_df <- left_join(merge_df, Tem.panel, by = c("GEOID", "date"))
+rm(Tem.panel)
 
 
 
 #test code
-merge_df.pd <- pdata.frame(merge_df, index = c("id", "date"))
+merge_df.pd <- pdata.frame(merge_df, index = c("GEOID", "date"))
 
-test.ols <- plm(deaths_perc ~ confirmed_perc + stringency_index, data = merge_df.pd, model = "pooling") 
+test.ols <- plm(deaths_perc ~ confirmed_perc + stringency_index + NDVI + tem,
+                data = merge_df.pd, model = "pooling") 
 summary(test.ols)
-test.fe <- plm(deaths_perc ~ confirmed_perc + stringency_index, data = merge_df.pd, model = "within")
+test.fe <- plm(deaths_perc ~ confirmed_perc + stringency_index + NDVI + tem, 
+               data = merge_df.pd, model = "within")
 summary(test.fe)
-test.re <- plm(deaths_perc ~ confirmed_perc + stringency_index, data = merge_df.pd, model = "random")
+test.re <- plm(deaths_perc ~ confirmed_perc + stringency_index + NDVI + tem, 
+               data = merge_df.pd, model = "random")
 summary(test.re)
 
 pFtest(test.fe, test.ols)
