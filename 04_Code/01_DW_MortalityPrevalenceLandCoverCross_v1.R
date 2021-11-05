@@ -1,3 +1,12 @@
+# Author: M.L.
+
+# output: dataset.Rdata
+
+# dataset.Rdata: "incidence_proportion" incidence_proportion = confirmed / population * 1000.
+# dataset.Rdata: "mortality" mortality = deaths / population * 1000.
+
+# end
+
 library(readr)
 library(tidyverse)
 library("dplyr")
