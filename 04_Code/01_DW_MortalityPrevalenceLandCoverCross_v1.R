@@ -27,7 +27,7 @@ library(olsrr)
 library("readxl")
 
 
-deat.conf.pop <- COVID19::covid19(country = "USA", level = 3) %>% filter(date == ymd("2021-10-15"))
+deat.conf.pop <- COVID19::covid19(country = "USA", level = 3) %>% filter(date == ymd("2021-11-01"))
 deat.conf.pop <- deat.conf.pop %>% filter(administrative_area_level_2 != "Puerto Rico")
 deat.conf.pop <- deat.conf.pop %>% select(confirmed, deaths, population, key_local)
 deat.conf.pop <- deat.conf.pop %>% rename(key_numeric = key_local)
