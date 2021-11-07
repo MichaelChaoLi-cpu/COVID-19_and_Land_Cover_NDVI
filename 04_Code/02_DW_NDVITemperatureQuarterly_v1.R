@@ -1,3 +1,15 @@
+# Author: M.L.
+
+# output: panel_mod.csv
+
+# panel_mod.csv: "NDVI" this is raw data, which should be multiply by the factor (0.0001). MOD13A3 1 km monthly NDVI 
+# panel_mod.csv: "DayTem" this is raw data, which should be multiply by the factor (0.02 K). MOD11C3 0.05 monthly
+# panel_mod.csv: "NightTem" this is raw data, which should be multiply by the factor (0.02 K). MOD11C3 0.05 monthly
+# 
+
+# end
+
+
 library(tidyverse)
 library(dplyr)
 library(readxl)
@@ -134,4 +146,31 @@ NightTemperature.data$type <- "NigTem"
 DayTemperature.data$type <- "DayTem"
 
 panel_mod <- rbind(NDVI.data, NightTemperature.data, DayTemperature.data)
-panel_mod %>% write.csv("02_RawData\\panel_mod.csv")
+#panel_mod %>% write.csv("02_RawData\\panel_mod.csv")
+
+# to get the NTL 
+filelist <- list.files("D:/05_Article/NTLoutput")
+month.code <- str_sub(filelist, 42, 48)
+
+NTL.data <- us_shape@data %>% dplyr::select(GEOID)
+
+for (raster.date in month.code){
+  tif.list <- list()
+  tif.name.used <- c()
+  for (tif.name in filelist){
+    if (raster.date == str_sub(tif.name, 42, 48)){
+      tif.name.used <- append(tif.name.used, tif.name)
+    }
+  }
+  for (tif.name.used.single in tif.name.used) {
+    tif <- raster(paste0("D:/05_Article/NTLoutput/", tif.name.used.single))
+    tif.list <- append(tif.list, tif)
+  }
+  merged.tif <- do.call(merge, tif.list)
+  rm(tif.list)
+  rm(tif)
+  extract.data <- raster::extract(merged.tif, us_shape, fun = mean, na.rm = T)
+  extract.data <- as.data.frame(extract.data)
+  colnames(extract.data) <- paste0("D", str_sub(raster.date, 1, 4), "_", str_sub(raster.date, 5, 7)) 
+  NTL.data <- cbind(NTL.data, extract.data)
+}

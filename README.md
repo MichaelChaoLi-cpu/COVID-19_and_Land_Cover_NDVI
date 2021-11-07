@@ -9,13 +9,15 @@ COVID19 Package: confirmed cases, deaths, population, restrictions information.
 [PovertyEstimates.csv](02_RawData/PovertyEstimates.csv): downloaded from <https://www.ers.usda.gov/data-products/county-level-data-sets/download-data/>. 
 [Education.csv](02_RawData/Education.csv): downloaded from <https://www.ers.usda.gov/data-products/county-level-data-sets/download-data/>.  
 cc-est2019-alldata.csv (Not uploaded): downloaded from <https://www.census.gov/data/tables/time-series/demo/popest/2010s-counties-detail.html>. This data set is about county-level age group, sex, and race.  
-(obese_what_inactive.xls)['02_RawData/obese_what_inactive.xls']: downloaded from <https://www.countyhealthrankings.org/explore-health-rankings/rankings-data-documentation>.  
+(obese_what_inactive.xls)[02_RawData/obese_what_inactive.xls]: downloaded from <https://www.countyhealthrankings.org/explore-health-rankings/rankings-data-documentation>.  
 (hospitalBed.csv)[02_RawData/hospitalBed.csv]: downloaded from <https://hifld-geoplatform.opendata.arcgis.com/datasets/hospitals/data>.  
 (temp_seasonal_county.csv)[02_RawData/temp_seasonal_county.csv]: downloaded from <https://www.northwestknowledge.net/metdata/data/>. This data set is about temperature, and humidity.  
 (county_pm25.csv)[02_RawData/county_pm25.csv]: downloaded from <https://github.com/wxwx1993/PM_COVID/tree/master/Data>.  
   
 ## Code  
-[01_DW_MortalityPrevalenceLandCoverCross_v1.R](04_Code/01_DW_MortalityPrevalenceLandCoverCross_v1.R): This script is to wash the data to get the cross-sectional dataset in the analysis. The result of this script is the (dataset)[00RData/dateset.Rdata], including the variable of the county-level prevalence and mortality (capita/1000) of the COVID-19 in the U.S, due by 1st Nov. This dataset also contain the county-level land cover data (hm/capi), weather, income, population, etc.  
+[01_DW_MortalityPrevalenceLandCoverCross_v1.R](04_Code/01_DW_MortalityPrevalenceLandCoverCross_v1.R): This script is to wash the data to get the cross-sectional dataset in the analysis. The result of this script is the (dataset)[00_RData/dateset.Rdata], including the variable of the county-level prevalence and mortality (capita/1000) of the COVID-19 in the U.S, due by 1st Nov. This dataset also contain the county-level land cover data (hm/capi), weather, income, population, etc.  
+[02_DW_NDVITemperatureQuarterly_v1.R](04_Code/02_DW_NDVITemperatureQuarterly_v1.R): This script is to wash the data to get the monthly panel dataset of the NDVI and Temperature data in the analysis. The result of this script is the (panel_mod.csv)[02_RawData/panel_mod.csv] due by the third quarter in the 2021.
   
 ## Workflow  
 WF.A: 01 -> END  
+WF.B: 02 -> END 
