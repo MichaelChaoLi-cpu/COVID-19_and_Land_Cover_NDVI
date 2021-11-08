@@ -15,9 +15,16 @@ cc-est2019-alldata.csv (Not uploaded): downloaded from <https://www.census.gov/d
 (county_pm25.csv)[02_RawData/county_pm25.csv]: downloaded from <https://github.com/wxwx1993/PM_COVID/tree/master/Data>.  
   
 ## Code  
-[01_DW_MortalityPrevalenceLandCoverCross_v1.R](04_Code/01_DW_MortalityPrevalenceLandCoverCross_v1.R): This script is to wash the data to get the cross-sectional dataset in the analysis. The result of this script is the (dataset)[00_RData/dateset.Rdata], including the variable of the county-level prevalence and mortality (capita/1000) of the COVID-19 in the U.S, due by 1st Nov. This dataset also contain the county-level land cover data (hm/capi), weather, income, population, etc.  
+[01_DW_MortalityPrevalenceLandCoverCross_v1.R](04_Code/01_DW_MortalityPrevalenceLandCoverCross_v1.R): This script is to wash the data to get the cross-sectional dataset in the analysis. The result of this script is the [dataset](00_RData/dateset.Rdata), including the variable of the county-level prevalence and mortality (capita/1000) of the COVID-19 in the U.S, due by 1st Nov. This dataset also contain the county-level land cover data (hm/capi), weather, income, population, etc.  
 [02_DW_NDVITemperatureQuarterly_v1.R](04_Code/02_DW_NDVITemperatureQuarterly_v1.R): This script is to wash the data to get the monthly panel dataset of the NDVI and Temperature data in the analysis. The result of this script is the (panel_mod.csv)[02_RawData/panel_mod.csv] due by the third quarter in the 2021.
+[03_AN_OLSPrevalenceMortalityCross_v1.R](04_Code/03_AN_OLSPrevalenceMortalityCross_v1): This script perform OLS on the [dataset](00_RData/dateset.Rdata) to detect the relationship between land cover and mortality as well as prevalence of COVID-19. The estimated parameters in the OLS results are fixed based on the bp tests. The residuals from the OLS are spatially clustering, according to Moran's I test. Therefore, in this scripts, the GWR models are also included. However, the local parameters from the GWR are scarcely signifcant. Obviously, the GWR is not the ideal model to solve this spatial spillover. This script output two results, [SeperatedOLS.MR.html](03_Results/SeperatedOLS.MR.html) and [SeperatedOLS.PR.html](03_Results/SeperatedOLS.PR.html), which are the OLS results of the associations of land cover with mortality and prevalence, respectively.  
+[04_AN_SpatialModelPrevalenceMortalityCross_v0.R](04_Code/04_AN_SpatialModelPrevalenceMortalityCross_v0.R): This script tries to use other spatial models to trackle the spillover of COVID-19. The first one is SAR.    
+
   
 ## Workflow  
-WF.A: 01 -> END  
-WF.B: 02 -> END 
+**WF.A: 01 -> 03 -> 04 -> END**  
+**WF.A.01.03**: This step provide the data to perform OLS. According to the results of OLS, the rediduals are spatially clustering. Though GWR is considered, the poor results of GWR make us reject it.  
+**WF.A.03.04**: This step make us try to use other spatial models.  
+  
+**WF.B: 02 -> END** 
+
