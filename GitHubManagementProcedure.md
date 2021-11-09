@@ -6,7 +6,8 @@ A: aim; revision; results. Here A(12:00), B(15:00), C(17:30) is the time. If nee
 A.12:  B.15:  C.18:  
   
 ## 2 Requirements of Code File  
-These management rules are only controlling the research project, not including package developing project or others.  
+1. These management rules are only controlling the research project, not including package developing project or others.  
+2. With in the script, all the address should use '/' rather than '\\'.  
   
 ### 2.1 Naming the Coding Scripts  
 Temporarily, we normally consider three types of scripts are used in the analysis project: data washing (DW), analysis (AN), visualization (VI). All Rscripts should be ordered from 01. Version should add at the ending of the name, form v1. Working version is v0. The aim of the code should be including in the name with five words using camel methods. All the element should be connected by "_".  

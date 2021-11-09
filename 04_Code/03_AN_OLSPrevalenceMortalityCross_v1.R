@@ -32,13 +32,13 @@ library(parallel)
 library(tmap)
 
 load("00_RData/dataset.Rdata")
-variables.in.reg.form = c("Open_Water_capi",
-                          "Developed_Open_Space_capi","Developed_Low_Intensity_capi",
-                          "Developed_Medium_Intensity_capi",
-                          "Developed_High_Intensity_capi","Barren_Land_capi","Deciduous_Forest_capi",
-                          "Evergreen_Forest_capi","Mixed_Forest_capi","Shrub_capi",
-                          "Grassland_capi"," Pasture_capi"," Cultivated_Crops_capi",
-                          "Woody_Wetlands_capi","Emergent_Herbaceous_Wetlands_capi")
+variables.in.reg.form = c("Open_Water_perc",
+                          "Developed_Open_Space_perc","Developed_Low_Intensity_perc",
+                          "Developed_Medium_Intensity_perc",
+                          "Developed_High_Intensity_perc","Barren_Land_perc","Deciduous_Forest_perc",
+                          "Evergreen_Forest_perc","Mixed_Forest_perc","Shrub_perc",
+                          "Grassland_perc"," Pasture_perc"," Cultivated_Crops_perc",
+                          "Woody_Wetlands_perc","Emergent_Herbaceous_Wetlands_perc")
 reg.form.mort <- function(vari_name){
   #  input a variable name
   func = paste('mortality ~', vari_name, " +
@@ -133,19 +133,19 @@ stargazer(model.mort.1, model.mort.2, model.mort.3, model.mort.4, model.mort.5,
                     rse.mort.15),
           no.space = T,
           covariate.labels = c(
-            'Open Water (hm2/cap)', 
-            'Open Space Developed Area (hm2/cap)',                   
-            "Low Intensity Developed Area (hm2/cap)",
-            "Medium Intensity Developed Area (hm2/cap)",
-            'High Intensity Developed Area (hm2/cap)',
-            'Barren Land (hm2/cap)',
-            'Deciduous Forest (hm2/cap)',
-            'Evergreen Forest (hm2/cap)',
-            'Mixed Forest (hm2/cap)', 'Shrub (hm2/cap)',
-            'Grassland (hm2/cap)', 'Pasture (hm2/cap)',
-            'Cultivated Crops (hm2/cap)',
-            'Woody Wetlands (hm2/cap)',
-            'Emergent Herbaceous Wetlands (hm2/cap)',
+            'Open Water (%)', 
+            'Open Space Developed Area (%)',                   
+            "Low Intensity Developed Area (%)",
+            "Medium Intensity Developed Area (%)",
+            'High Intensity Developed Area (%)',
+            'Barren Land (%)',
+            'Deciduous Forest (%)',
+            'Evergreen Forest (%)',
+            'Mixed Forest (%)', 'Shrub (%)',
+            'Grassland (%)', 'Pasture (%)',
+            'Cultivated Crops (%)',
+            'Woody Wetlands (%)',
+            'Emergent Herbaceous Wetlands (%)',
             "Prevalence Rate (cap/1000)",
             'Gathering Restrictions (days)',
             'Transport Closing (days)', 'Staying Home (days)',
@@ -260,19 +260,19 @@ stargazer(model.pr.1, model.pr.2, model.pr.3, model.pr.4, model.pr.5, model.pr.6
                     rse.pr.12, rse.pr.13, rse.pr.14, rse.pr.15),
           no.space = T,
           covariate.labels = c(
-            'Open Water (hm2/cap)', 
-            'Open Space Developed Area (hm2/cap)',                   
-            "Low Intensity Developed Area (hm2/cap)",
-            "Medium Intensity Developed Area (hm2/cap)",
-            'High Intensity Developed Area (hm2/cap)',
-            'Barren Land (hm2/cap)',
-            'Deciduous Forest (hm2/cap)',
-            'Evergreen Forest (hm2/cap)',
-            'Mixed Forest (hm2/cap)', 'Shrub (hm2/cap)',
-            'Grassland (hm2/cap)', 'Pasture (hm2/cap)',
-            'Cultivated Crops (hm2/cap)',
-            'Woody Wetlands (hm2/cap)',
-            'Emergent Herbaceous Wetlands (hm2/cap)',
+            'Open Water (%)', 
+            'Open Space Developed Area (%)',                   
+            "Low Intensity Developed Area (%)",
+            "Medium Intensity Developed Area (%)",
+            'High Intensity Developed Area (%)',
+            'Barren Land (%)',
+            'Deciduous Forest (%)',
+            'Evergreen Forest (%)',
+            'Mixed Forest (%)', 'Shrub (%)',
+            'Grassland (%)', 'Pasture (%)',
+            'Cultivated Crops (%)',
+            'Woody Wetlands (%)',
+            'Emergent Herbaceous Wetlands (%)',
             'Gathering Restrictions (days)',
             'Transport Closing (days)', 'Staying Home (days)',
             "Internal MoRe (days)", "International MoRe (days)",
@@ -301,13 +301,13 @@ if(suitable)
 {
   # Moran I Test
   tes <- dataset %>%
-    dplyr::select("Open_Water_capi",
-                  "Developed_Open_Space_capi","Developed_Low_Intensity_capi",
-                  "Developed_Medium_Intensity_capi",
-                  "Developed_High_Intensity_capi","Barren_Land_capi","Deciduous_Forest_capi",
-                  "Evergreen_Forest_capi","Mixed_Forest_capi","Shrub_capi",
-                  "Grassland_capi","Pasture_capi","Cultivated_Crops_capi",
-                  "Woody_Wetlands_capi","Emergent_Herbaceous_Wetlands_capi",
+    dplyr::select("Open_Water_perc",
+                  "Developed_Open_Space_perc","Developed_Low_Intensity_perc",
+                  "Developed_Medium_Intensity_perc",
+                  "Developed_High_Intensity_perc","Barren_Land_perc","Deciduous_Forest_perc",
+                  "Evergreen_Forest_perc","Mixed_Forest_perc","Shrub_perc",
+                  "Grassland_perc","Pasture_perc","Cultivated_Crops_perc",
+                  "Woody_Wetlands_perc","Emergent_Herbaceous_Wetlands_perc",
                   incidence_proportion, 
                   gatherings_restrictions, transport_closing,
                   stay_home_restrictions, internal_movement_restrictions, 
@@ -409,50 +409,50 @@ if(suitable)
   gwr.model.15 <- gwr.basic(reg.form.mort(variables.in.reg.form[15]), data = us_shape,
                            bw = GWRbandwidth.15, adaptive = F)
   
-  (abs(gwr.model.1$SDF$Open_Water_capi_TV) > 1.645) %>% summary()
-  (abs(gwr.model.2$SDF$Developed_Open_Space_capi_TV ) > 1.645) %>% summary()
-  (abs(gwr.model.3$SDF$Developed_Low_Intensity_capi_TV ) > 1.645) %>% summary()
-  (abs(gwr.model.4$SDF$Developed_Medium_Intensity_capi_TV ) > 1.645) %>% summary()
-  (abs(gwr.model.5$SDF$Developed_High_Intensity_capi_TV ) > 1.645) %>% summary()
-  (abs(gwr.model.6$SDF$Barren_Land_capi_TV) > 1.645) %>% summary()
-  (abs(gwr.model.7$SDF$Deciduous_Forest_capi_TV) > 1.645) %>% summary()
-  (abs(gwr.model.8$SDF$Evergreen_Forest_capi_TV) > 1.645) %>% summary()
-  (abs(gwr.model.9$SDF$Mixed_Forest_capi_TV) > 1.645) %>% summary()
-  (abs(gwr.model.10$SDF$Shrub_capi_TV) > 1.645) %>% summary()
-  (abs(gwr.model.11$SDF$Grassland_capi_TV) > 1.645) %>% summary()
-  (abs(gwr.model.12$SDF$Pasture_capi_TV) > 1.645) %>% summary()
-  (abs(gwr.model.13$SDF$Cultivated_Crops_capi_TV) > 1.645) %>% summary()
-  (abs(gwr.model.14$SDF$Woody_Wetlands_capi_TV) > 1.645) %>% summary()
-  (abs(gwr.model.15$SDF$Emergent_Herbaceous_Wetlands_capi_TV) > 1.645) %>% summary()
+  (abs(gwr.model.1$SDF$Open_Water_perc_TV) > 1.645) %>% summary()
+  (abs(gwr.model.2$SDF$Developed_Open_Space_perc_TV ) > 1.645) %>% summary()
+  (abs(gwr.model.3$SDF$Developed_Low_Intensity_perc_TV ) > 1.645) %>% summary()
+  (abs(gwr.model.4$SDF$Developed_Medium_Intensity_perc_TV ) > 1.645) %>% summary()
+  (abs(gwr.model.5$SDF$Developed_High_Intensity_perc_TV ) > 1.645) %>% summary()
+  (abs(gwr.model.6$SDF$Barren_Land_perc_TV) > 1.645) %>% summary()
+  (abs(gwr.model.7$SDF$Deciduous_Forest_perc_TV) > 1.645) %>% summary()
+  (abs(gwr.model.8$SDF$Evergreen_Forest_perc_TV) > 1.645) %>% summary()
+  (abs(gwr.model.9$SDF$Mixed_Forest_perc_TV) > 1.645) %>% summary()
+  (abs(gwr.model.10$SDF$Shrub_perc_TV) > 1.645) %>% summary()
+  (abs(gwr.model.11$SDF$Grassland_perc_TV) > 1.645) %>% summary()
+  (abs(gwr.model.12$SDF$Pasture_perc_TV) > 1.645) %>% summary()
+  (abs(gwr.model.13$SDF$Cultivated_Crops_perc_TV) > 1.645) %>% summary()
+  (abs(gwr.model.14$SDF$Woody_Wetlands_perc_TV) > 1.645) %>% summary()
+  (abs(gwr.model.15$SDF$Emergent_Herbaceous_Wetlands_perc_TV) > 1.645) %>% summary()
   
   tm_shape(gwr.model.1$SDF) +
-    tm_polygons(col = 'Open_Water_capi', pal = "-RdYlGn")
+    tm_polygons(col = 'Open_Water_perc', pal = "-RdYlGn")
   tm_shape(gwr.model.2$SDF) +
-    tm_polygons(col = 'Developed_Open_Space_capi', pal = "-RdYlGn")
+    tm_polygons(col = 'Developed_Open_Space_perc', pal = "-RdYlGn")
   tm_shape(gwr.model.3$SDF) +
-    tm_polygons(col = 'Developed_Low_Intensity_capi', pal = "-RdYlGn")
+    tm_polygons(col = 'Developed_Low_Intensity_perc', pal = "-RdYlGn")
   tm_shape(gwr.model.4$SDF) +
-    tm_polygons(col = 'Developed_Medium_Intensity_capi', pal = "-RdYlGn")
+    tm_polygons(col = 'Developed_Medium_Intensity_perc', pal = "-RdYlGn")
   tm_shape(gwr.model.5$SDF) +
-    tm_polygons(col = 'Developed_High_Intensity_capi', pal = "-RdYlGn")
+    tm_polygons(col = 'Developed_High_Intensity_perc', pal = "-RdYlGn")
   tm_shape(gwr.model.6$SDF) +
-    tm_polygons(col = 'Barren_Land_capi', pal = "-RdYlGn")
+    tm_polygons(col = 'Barren_Land_perc', pal = "-RdYlGn")
   tm_shape(gwr.model.7$SDF) +
-    tm_polygons(col = 'Deciduous_Forest_capi', pal = "-RdYlGn")
+    tm_polygons(col = 'Deciduous_Forest_perc', pal = "-RdYlGn")
   tm_shape(gwr.model.8$SDF) +
-    tm_polygons(col = 'Evergreen_Forest_capi', pal = "-RdYlGn")
+    tm_polygons(col = 'Evergreen_Forest_perc', pal = "-RdYlGn")
   tm_shape(gwr.model.9$SDF) +
-    tm_polygons(col = 'Mixed_Forest_capi', pal = "-RdYlGn")
+    tm_polygons(col = 'Mixed_Forest_perc', pal = "-RdYlGn")
   tm_shape(gwr.model.10$SDF) +
-    tm_polygons(col = 'Shrub_capi', pal = "-RdYlGn")
+    tm_polygons(col = 'Shrub_perc', pal = "-RdYlGn")
   tm_shape(gwr.model.11$SDF) +
-    tm_polygons(col = 'Grassland_capi', pal = "-RdYlGn")
+    tm_polygons(col = 'Grassland_perc', pal = "-RdYlGn")
   tm_shape(gwr.model.12$SDF) +
-    tm_polygons(col = 'Pasture_capi', pal = "-RdYlGn")
+    tm_polygons(col = 'Pasture_perc', pal = "-RdYlGn")
   tm_shape(gwr.model.13$SDF) +
-    tm_polygons(col = 'Cultivated_Crops_capi', pal = "-RdYlGn")
+    tm_polygons(col = 'Cultivated_Crops_perc', pal = "-RdYlGn")
   tm_shape(gwr.model.14$SDF) +
-    tm_polygons(col = 'Woody_Wetlands_capi', pal = "-RdYlGn")
+    tm_polygons(col = 'Woody_Wetlands_perc', pal = "-RdYlGn")
   tm_shape(gwr.model.15$SDF) +
-    tm_polygons(col = 'Emergent_Herbaceous_Wetlands_capi', pal = "-RdYlGn")
+    tm_polygons(col = 'Emergent_Herbaceous_Wetlands_perc', pal = "-RdYlGn")
 }

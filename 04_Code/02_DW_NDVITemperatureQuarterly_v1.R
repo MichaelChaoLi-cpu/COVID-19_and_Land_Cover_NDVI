@@ -5,7 +5,7 @@
 # panel_mod.csv: "NDVI" this is raw data, which should be multiply by the factor (0.0001). MOD13A3 1 km monthly NDVI 
 # panel_mod.csv: "DayTem" this is raw data, which should be multiply by the factor (0.02 K). MOD11C3 0.05 monthly
 # panel_mod.csv: "NightTem" this is raw data, which should be multiply by the factor (0.02 K). MOD11C3 0.05 monthly
-# 
+# panel_mod.csv: "NTL" this is nightlight data. VNP46A3 15 arc second
 
 # end
 
@@ -146,7 +146,6 @@ NightTemperature.data$type <- "NigTem"
 DayTemperature.data$type <- "DayTem"
 
 panel_mod <- rbind(NDVI.data, NightTemperature.data, DayTemperature.data)
-#panel_mod %>% write.csv("02_RawData\\panel_mod.csv")
 
 # to get the NTL 
 filelist <- list.files("D:/05_Article/NTLoutput")
@@ -174,3 +173,8 @@ for (raster.date in month.code){
   colnames(extract.data) <- paste0("D", str_sub(raster.date, 1, 4), "_", str_sub(raster.date, 5, 7)) 
   NTL.data <- cbind(NTL.data, extract.data)
 }
+
+NTL.data$type <- "NTL"
+panel_mod <- rbind(panel_mod, NTL.data)
+
+panel_mod %>% write.csv("02_RawData\\panel_mod.csv")
