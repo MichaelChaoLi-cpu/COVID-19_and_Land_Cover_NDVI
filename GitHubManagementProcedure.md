@@ -13,6 +13,7 @@ A.12:  B.15:  C.18:
 Temporarily, we normally consider three types of scripts are used in the analysis project: data washing (DW), analysis (AN), visualization (VI). All Rscripts should be ordered from 01. Version should add at the ending of the name, form v1. Working version is v0. The aim of the code should be including in the name with five words using camel methods. All the element should be connected by "_".  
 e.g.: 01_DW_MortalityPrevalanceLandCoverCross_V1.R  
       02_DW_MortalityPrevelanceNDVIQuartarPanel_V0.R  
+There is an additional type of scripts, which is to store some useful self-defined functions, assistant function (AF). They also take the ordered number in the project. Moreover, they will put into a specific repo to store.   
   
 After the Rscripts cteated, the file should be mentioned in the readme with the necessary information and link.  
   

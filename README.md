@@ -1,4 +1,4 @@
-# COVID-19 and Land Cover as well as NDVI
+# COVID-19 and Land Cover as well as NDVI (DP05)
 This is the research on the relationship between COVID-19 and Land Cover as well as monthly NDVI in the USA
 
 ## Data  

@@ -158,7 +158,7 @@ merge_df.Q <- left_join(merge_df.Q, Tem.panel, by = c("GEOID", "date"))
 rm(Tem.panel)
 
 NTL.panel <- NDVI.temper..NTL.panel %>%
-  filter(type == "NDVI") %>%
+  filter(type == "NTL") %>%
   dplyr::select(-type)
 NTL.panel <- NTL.panel %>%
   pivot_longer(cols = D2020_001:D2021_182, names_to = "date", values_to = "NTL")

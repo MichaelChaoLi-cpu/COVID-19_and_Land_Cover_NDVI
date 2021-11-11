@@ -45,7 +45,7 @@ reg.form.mort <- function(vari_name){
   incidence_proportion + gatherings_restrictions + transport_closing +
   stay_home_restrictions + internal_movement_restrictions + 
   international_movement_restrictions + 
-  pop_density +
+  #TestCode pop_density +
   age15_44 + age45_64 +
   age65_99 + black_rate + hispanic_rate + male +
   Unemployment_rate_2019 + log_Median_Household_Income_2018 +
@@ -58,10 +58,41 @@ reg.form.mort <- function(vari_name){
   return(func)
 }
 
+
+# to guarantee there are the same dataset in the spatial model and ols model
+tes <- dataset %>%
+  dplyr::select("Open_Water_perc",
+                "Developed_Open_Space_perc","Developed_Low_Intensity_perc",
+                "Developed_Medium_Intensity_perc",
+                "Developed_High_Intensity_perc","Barren_Land_perc","Deciduous_Forest_perc",
+                "Evergreen_Forest_perc","Mixed_Forest_perc","Shrub_perc",
+                "Grassland_perc","Pasture_perc","Cultivated_Crops_perc",
+                "Woody_Wetlands_perc","Emergent_Herbaceous_Wetlands_perc",
+                incidence_proportion, 
+                gatherings_restrictions, transport_closing,
+                stay_home_restrictions, internal_movement_restrictions, 
+                international_movement_restrictions, 
+                #TestCode pop_density, 
+                mortality,
+                age15_44, age45_64, age65_99, black_rate, hispanic_rate, male,
+                Unemployment_rate_2019, log_Median_Household_Income_2018,
+                poverty_rate, less_than_high_school,  
+                poor_health_rate_2019, poor_physical_days_2019, poor_mental_days_2019,
+                smoker_rate_2019, obesity_rate_2019, physical_inactivity_2019,
+                exercise_opportunities_rate_2019,
+                hospital_beds_per_1000, summer_tmmx_mean, winter_tmmx_mean, summer_rmax_mean,
+                winter_rmax_mean, pm25_mean, key_numeric
+  ) %>% na.omit()
+us_shape <- readOGR(dsn = "01_Raster\\01_Boundary", layer = "cb_2017_us_county_20m84")
+us_shape <- geo_join(us_shape, tes, 'CountyFIPS', 'key_numeric', how = 'inner')
+plot(us_shape) # now there are 3081 records
+rm(tes)
+gc() 
+
 ols.reg.mort <- function(variable.number){
   reg.form <- reg.form.mort(variables.in.reg.form[variable.number])
   model <- lm(reg.form,
-                data = dataset)
+                data = us_shape@data)
   return(model)
 }
 
@@ -150,7 +181,8 @@ stargazer(model.mort.1, model.mort.2, model.mort.3, model.mort.4, model.mort.5,
             'Gathering Restrictions (days)',
             'Transport Closing (days)', 'Staying Home (days)',
             "Internal MoRe (days)", "International MoRe (days)",
-            "Population Density (cap/km2)",'Population 15-44 (%)',
+            #"Population Density (cap/km2)",
+            'Population 15-44 (%)',
             'Population 45-64 (%)', 
             'Population >= 65 (%)', 'Black People (%)', 
             'Hispanic People (%)',  'Male (%)',
@@ -174,7 +206,7 @@ reg.form.pr <- function(vari_name){
   gatherings_restrictions + transport_closing +
   stay_home_restrictions + internal_movement_restrictions + 
   international_movement_restrictions + 
-  pop_density +
+  #pop_density +
   age15_44 + age45_64 +
   age65_99 + black_rate + hispanic_rate + male +
   Unemployment_rate_2019 + log_Median_Household_Income_2018 +
@@ -190,7 +222,7 @@ reg.form.pr <- function(vari_name){
 ols.reg.pr <- function(variable.number){
   reg.form.pr <- reg.form.pr(variables.in.reg.form[variable.number])
   model <- lm(reg.form.pr,
-              data = dataset)
+              data = us_shape@data)
   return(model)
 }
 
