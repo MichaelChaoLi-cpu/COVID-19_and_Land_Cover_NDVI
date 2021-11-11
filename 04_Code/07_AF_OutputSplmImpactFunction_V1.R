@@ -4,6 +4,12 @@
 
 # output_SPML_model_impacts: "function()" the function to output spml model impacts
 
+# e.g.:
+# impact_summary <- summary(spdep::impacts(model.spml, listw = listW,
+#                           time = 6, R = 1000), zstats = TRUE, short = T) 
+# variable_name <- c('A','B','C','D','E') assuming there are five independent variables.
+# impact.table <- output_SPML_model_impacts(impact_summary, variable_name)
+
 # end
 
 library(tidyverse)
