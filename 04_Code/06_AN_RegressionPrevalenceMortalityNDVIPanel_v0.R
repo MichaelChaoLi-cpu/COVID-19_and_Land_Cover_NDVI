@@ -2,6 +2,15 @@
 
 # input: panel_NDVI_mortality_prevalence.csv
 
+# panel_NDVI_mortality_prevalence.csv: "stringency_index" this is prevention score, 0 (nothing) - 100 (utmost strict)
+# panel_NDVI_mortality_prevalence.csv: "date" this is the time index
+# panel_NDVI_mortality_prevalence.csv: "GEOID" this is the identity index.
+# panel_NDVI_mortality_prevalence.csv: "NDVI_perc" this is the percentage of NDVI (-100% - 100%) quarterly.
+# panel_NDVI_mortality_prevalence.csv: "tem_c" this is the temperature (C degree) quarterly.
+# panel_NDVI_mortality_prevalence.csv: "NLT" this is the index of Nighttime Light quarterly.
+# panel_NDVI_mortality_prevalence.csv: "confirmed_per1000" this is the prevalence index (confirmed case/1000) quarterly.
+# panel_NDVI_mortality_prevalence.csv: "deaths_per1000" this is the mortality index (mortality/1000) quarterly.
+
 # output: 
 
 # end
@@ -133,6 +142,8 @@ variable_name_death <- c("Prevalence (confirmed/1000 cap)", "Preventation String
                          "NDVI (%)", "Temperature",
                          "NTL", "Time Lag of Prevalence",  "Time Lag of Mortality")
 variable_name_conf <- c( "Preventation Stringency", "NDVI (%)", "Temperature",
-                         "NTL") #, "Time Lag of Prevalence",  "Time Lag of Mortality")
+                         "NTL", "Time Lag of Prevalence")
 impact.table.sdm.death <- output_SPML_model_impacts(impact_summary_death, variable_name_death)
 impact.table.sdm.conf <- output_SPML_model_impacts(impact_summary_conf, variable_name_conf)
+
+save.image("Temp/01_SpmlResultQuaterly.RData")

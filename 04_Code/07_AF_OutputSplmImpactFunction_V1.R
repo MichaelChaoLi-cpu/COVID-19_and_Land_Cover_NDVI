@@ -21,9 +21,9 @@ output_SPML_model_impacts <- function(impact_summary, variable_name){
   col2 <- impact_summary$res$direct %>% round(6) %>% as.character()
   col3 <- impact_summary$res$indirect %>% round(6) %>% as.character()
   col4 <- impact_summary$res$total %>% round(6) %>% as.character()
-  col5 <- impact_summary$pzmat[,1] %>% as.vector()
-  col6 <- impact_summary$pzmat[,2] %>% as.vector()
-  col7 <- impact_summary$pzmat[,3] %>% as.vector()
+  col5 <- impact_summary$pzmat[,1] %>% as.vector() %>% round(6)
+  col6 <- impact_summary$pzmat[,2] %>% as.vector() %>% round(6)
+  col7 <- impact_summary$pzmat[,3] %>% as.vector() %>% round(6)
   
   output <- cbind(col1, col2, col3, col4, col5, col6, col7) %>% as.data.frame()
   output <- output %>%
@@ -44,12 +44,12 @@ output_SPML_model_impacts <- function(impact_summary, variable_name){
   output <- rbind(output, output)
   output <- output %>% arrange(num)
   
-  col1 <- c("", "", "","", "", "","")
-  col2 <- paste0("(",impact_summary$semat[,1] %>% as.vector() %>% round(6) %>% as.character(),")")
-  col3 <- paste0("(",impact_summary$semat[,2] %>% as.vector() %>% round(6) %>% as.character(),")")
-  col4 <- paste0("(",impact_summary$semat[,3] %>% as.vector() %>% round(6) %>% as.character(),")")
+  col1.se <- c("", "", "","", "", "","")
+  col2.se <- paste0("(",impact_summary$semat[,1] %>% as.vector() %>% round(6) %>% as.character(),")")
+  col3.se <- paste0("(",impact_summary$semat[,2] %>% as.vector() %>% round(6) %>% as.character(),")")
+  col4.se <- paste0("(",impact_summary$semat[,3] %>% as.vector() %>% round(6) %>% as.character(),")")
   
-  output.se <- cbind(col1, col2, col3, col4) %>% as.data.frame()
+  output.se <- cbind(col1.se, col2.se, col3.se, col4.se) %>% as.data.frame()
   output.se$num <- c(1:nrow(output.se)) 
   output[seq(2,nrow(output),2),] <- output.se 
   output <- output %>% dplyr::select(-num)

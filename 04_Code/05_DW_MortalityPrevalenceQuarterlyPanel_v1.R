@@ -1,15 +1,22 @@
 # Author: M.L.
 
+# input: panel_mod.csv
+
+# panel_mod.csv: "NDVI" this is raw data, which should be multiply by the factor (0.0001). MOD13A3 1 km monthly NDVI 
+# panel_mod.csv: "DayTem" this is raw data, which should be multiply by the factor (0.02 K). MOD11C3 0.05 monthly
+# panel_mod.csv: "NightTem" this is raw data, which should be multiply by the factor (0.02 K). MOD11C3 0.05 monthly
+# panel_mod.csv: "NTL" this is nightlight data. VNP46A3 15 arc second
+
 # output: panel_NDVI_mortality_prevalence.csv
 
 # panel_NDVI_mortality_prevalence.csv: "stringency_index" this is prevention score, 0 (nothing) - 100 (utmost strict)
 # panel_NDVI_mortality_prevalence.csv: "date" this is the time index
 # panel_NDVI_mortality_prevalence.csv: "GEOID" this is the identity index.
-# panel_NDVI_mortality_prevalence.csv: "NDVI_perc" this is the percentage of NDVI (-100% - 100%)
-# panel_NDVI_mortality_prevalence.csv: "tem_c" this is the temperature (C degree)
-# panel_NDVI_mortality_prevalence.csv: "NLT" this is the index of Nighttime Light.
-# panel_NDVI_mortality_prevalence.csv: "confirmed_per1000" this is the prevalence index (confirmed case/1000).
-# panel_NDVI_mortality_prevalence.csv: "deaths_per1000" this is the mortality index (mortality/1000).
+# panel_NDVI_mortality_prevalence.csv: "NDVI_perc" this is the percentage of NDVI (-100% - 100%) quarterly.
+# panel_NDVI_mortality_prevalence.csv: "tem_c" this is the temperature (C degree) quarterly.
+# panel_NDVI_mortality_prevalence.csv: "NLT" this is the index of Nighttime Light quarterly.
+# panel_NDVI_mortality_prevalence.csv: "confirmed_per1000" this is the prevalence index (confirmed case/1000) quarterly.
+# panel_NDVI_mortality_prevalence.csv: "deaths_per1000" this is the mortality index (mortality/1000) quarterly.
 
 # end
 
