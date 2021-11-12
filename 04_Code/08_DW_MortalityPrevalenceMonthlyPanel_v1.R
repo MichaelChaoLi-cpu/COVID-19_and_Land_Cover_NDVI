@@ -32,8 +32,8 @@ test <- plm::pdata.frame(test, index = c("id", "date"))
 test$confirmed.dif <- test$confirmed - plm::lag(test$confirmed)
 test$deaths.dif <- test$deaths - plm::lag(test$deaths)
 test <- test %>% 
-  mutate(confirmed = ifelse(confirmed < 0, 0, confirmed),
-         deaths = ifelse(deaths < 0, 0, deaths)) %>% 
+  mutate(confirmed.dif = ifelse(confirmed.dif < 0, 0, confirmed.dif),
+         deaths.dif = ifelse(deaths.dif < 0, 0, deaths.dif)) %>% 
   dplyr::select(-"confirmed", -"deaths")
 test <- lapply(test, function(x){attr(x, c("id", "date")) <- NULL; x}) %>% as.data.frame()
 test$id <- test$id %>% as.character()

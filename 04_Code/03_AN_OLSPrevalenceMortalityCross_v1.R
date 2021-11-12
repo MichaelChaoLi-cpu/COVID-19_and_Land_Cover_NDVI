@@ -30,6 +30,8 @@ library(GWmodel)
 library(stargazer)
 library(parallel)
 library(tmap)
+library(rgdal)
+library(tigris)
 
 load("00_RData/dataset.Rdata")
 variables.in.reg.form = c("Open_Water_perc",
@@ -152,11 +154,27 @@ rse.mort.14 <- rse.mort.bptest(ols.reg.mort(14))
 model.mort.15 <- ols.reg.mort(15) 
 rse.mort.15 <- rse.mort.bptest(ols.reg.mort(15))
 
+reg.form.mort.all <- reg.form.mort(
+  paste0("Open_Water_perc", "+",
+         "Developed_Open_Space_perc",  "+","Developed_Low_Intensity_perc",  "+",
+         "Developed_Medium_Intensity_perc", "+",
+         "Developed_High_Intensity_perc",  "+", "Deciduous_Forest_perc",  "+", 
+         "Evergreen_Forest_perc", "+", "Mixed_Forest_perc",  "+", "Shrub_perc", "+",
+         "Grassland_perc",  "+",
+         "Woody_Wetlands_perc", "+", "Emergent_Herbaceous_Wetlands_perc"
+  )
+)
+model.mort.all <- lm(reg.form.mort.all,
+                     data = us_shape@data)
+summary(model.mort.all)
+rse.mort.all <- rse.mort.bptest(model.mort.all)
+stargazer(model.mort.all, type = "text", se = list(rse.mort.all))
+
 
 stargazer(model.mort.1, model.mort.2, model.mort.3, model.mort.4, model.mort.5, 
           model.mort.6, model.mort.7, model.mort.8,model.mort.9, model.mort.10, 
           model.mort.11, model.mort.12, model.mort.13, model.mort.14, 
-          model.mort.15,
+          model.mort.15, 
           title = "Table XXX: Test",  type = "text", 
           se = list(rse.mort.1, rse.mort.2, rse.mort.3, rse.mort.4, rse.mort.5, 
                     rse.mort.6, rse.mort.7, rse.mort.8,rse.mort.9, rse.mort.10, 
@@ -281,6 +299,22 @@ rse.pr.14 <- rse.pr.bptest(ols.reg.pr(14))
 
 model.pr.15 <- ols.reg.pr(15) 
 rse.pr.15 <- rse.pr.bptest(ols.reg.pr(15))
+
+reg.form.pr.all <- reg.form.pr(
+  paste0("Open_Water_perc", "+",
+         "Developed_Open_Space_perc",  "+","Developed_Low_Intensity_perc",  "+",
+         "Developed_Medium_Intensity_perc", "+",
+         "Developed_High_Intensity_perc",  "+", "Deciduous_Forest_perc",  "+", 
+         "Evergreen_Forest_perc", "+", "Mixed_Forest_perc",  "+", "Shrub_perc", "+",
+         "Grassland_perc",  "+",
+         "Woody_Wetlands_perc", "+", "Emergent_Herbaceous_Wetlands_perc"
+  )
+)
+model.pr.all <- lm(reg.form.pr.all,
+                     data = us_shape@data)
+summary(model.pr.all)
+rse.pr.all <- rse.mort.bptest(model.pr.all)
+stargazer(model.pr.all, type = "text", se = list(rse.pr.all))
 
 
 stargazer(model.pr.1, model.pr.2, model.pr.3, model.pr.4, model.pr.5, model.pr.6,

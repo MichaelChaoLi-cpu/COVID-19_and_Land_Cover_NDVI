@@ -3,7 +3,11 @@
 # input: dataset.Rdata
 
 # Note: In 03 script, the Moran's I tests indicate that the residuals from OLS are
-#       spatially clustering. Therefore, spatail models are required.
+#       spatially clustering. Therefore, spatial models are required. Furthermore,
+#       according to the Lagrange Multiplier diagnostics for spatial dependence in
+#       linear models (lm.LMtests), both spatial lag and spatial error dependence 
+#       are significant. Therefore, the SAC model should be the best model in this
+#       study.
 
 # end
 
@@ -126,6 +130,16 @@ if(GOT_FORMULAS){
   reg.form.mort.13 <- reg.form.mort(variables.in.reg.form[13])
   reg.form.mort.14 <- reg.form.mort(variables.in.reg.form[14])
   reg.form.mort.15 <- reg.form.mort(variables.in.reg.form[15])
+  reg.form.mort.all <- reg.form.mort(
+    paste0("Open_Water_perc", "+",
+           "Developed_Open_Space_perc",  "+","Developed_Low_Intensity_perc",  "+",
+           "Developed_Medium_Intensity_perc", "+",
+           "Developed_High_Intensity_perc",  "+", "Deciduous_Forest_perc",  "+", 
+           "Evergreen_Forest_perc", "+", "Mixed_Forest_perc",  "+", "Shrub_perc", "+",
+           "Grassland_perc",  "+",
+           "Woody_Wetlands_perc", "+", "Emergent_Herbaceous_Wetlands_perc"
+    )
+  )
   
   reg.form.pr.1 <- reg.form.pr(variables.in.reg.form[1])
   reg.form.pr.2 <- reg.form.pr(variables.in.reg.form[2])
@@ -142,6 +156,16 @@ if(GOT_FORMULAS){
   reg.form.pr.13 <- reg.form.pr(variables.in.reg.form[13])
   reg.form.pr.14 <- reg.form.pr(variables.in.reg.form[14])
   reg.form.pr.15 <- reg.form.pr(variables.in.reg.form[15])
+  reg.form.pr.all <- reg.form.mort(
+    paste0("Open_Water_perc", "+",
+           "Developed_Open_Space_perc",  "+","Developed_Low_Intensity_perc",  "+",
+           "Developed_Medium_Intensity_perc", "+",
+           "Developed_High_Intensity_perc",  "+", "Deciduous_Forest_perc",  "+", 
+           "Evergreen_Forest_perc", "+", "Mixed_Forest_perc",  "+", "Shrub_perc", "+",
+           "Grassland_perc",  "+",
+           "Woody_Wetlands_perc", "+", "Emergent_Herbaceous_Wetlands_perc"
+    )
+  )
 }
 
 SPATIAL_MODEL_TEST <- T
@@ -176,21 +200,8 @@ if(SPATIAL_MODEL_TEST) {
                                  test=c("RLMerr", "RLMlag", "SARMA"))
   lmLMtests.mort.15 <- lm.LMtests(model.mort.15, listw = lw, zero.policy = T,
                                  test=c("RLMerr", "RLMlag", "SARMA"))
-  lmLMtests.mort.1
-  lmLMtests.mort.2
-  lmLMtests.mort.3
-  lmLMtests.mort.4
-  lmLMtests.mort.5
-  lmLMtests.mort.6
-  lmLMtests.mort.7
-  lmLMtests.mort.8
-  lmLMtests.mort.9
-  lmLMtests.mort.10
-  lmLMtests.mort.11
-  lmLMtests.mort.12
-  lmLMtests.mort.13
-  lmLMtests.mort.14
-  lmLMtests.mort.15
+  (lmLMtests.mort.all <- lm.LMtests(model.mort.all, listw = lw, zero.policy = T,
+                                  test=c("RLMerr", "RLMlag", "SARMA")))
   
   lmLMtests.pr.1 <- lm.LMtests(model.pr.1, listw = lw, zero.policy = T,
                                  test=c("RLMerr", "RLMlag", "SARMA"))
@@ -222,21 +233,8 @@ if(SPATIAL_MODEL_TEST) {
                                   test=c("RLMerr", "RLMlag", "SARMA"))
   lmLMtests.pr.15 <- lm.LMtests(model.pr.15, listw = lw, zero.policy = T,
                                   test=c("RLMerr", "RLMlag", "SARMA"))
-  lmLMtests.pr.1
-  lmLMtests.pr.2
-  lmLMtests.pr.3
-  lmLMtests.pr.4
-  lmLMtests.pr.5
-  lmLMtests.pr.6
-  lmLMtests.pr.7
-  lmLMtests.pr.8
-  lmLMtests.pr.9
-  lmLMtests.pr.10
-  lmLMtests.pr.11
-  lmLMtests.pr.12
-  lmLMtests.pr.13
-  lmLMtests.pr.14
-  lmLMtests.pr.15
+  (lmLMtests.pr.all <- lm.LMtests(model.pr.all, listw = lw, zero.policy = T,
+                                test=c("RLMerr", "RLMlag", "SARMA")))
 }
   
 SAR_LAG <- T # if run this block, then T
@@ -575,6 +573,8 @@ if(SARAR) {
                             zero.policy=TRUE, tol.solve = 1e-30)
   sac.mort.15 <- sacsarlm(reg.form.mort.15, data = us_shape@data, listw = lw, 
                             zero.policy=TRUE, tol.solve = 1e-30)
+  sac.mort.all <- sacsarlm(reg.form.mort.all, data = us_shape@data, listw = lw, 
+                          zero.policy=TRUE, tol.solve = 1e-30)
   
   
   stargazer(sac.mort.1, sac.mort.2, sac.mort.3, sac.mort.4,
@@ -650,6 +650,8 @@ if(SARAR) {
                           zero.policy=TRUE, tol.solve = 1e-30)
   sac.pr.15 <- sacsarlm(reg.form.pr.15, data = us_shape@data, listw = lw, 
                           zero.policy=TRUE, tol.solve = 1e-30)
+  sac.pr.all <- sacsarlm(reg.form.pr.all, data = us_shape@data, listw = lw, 
+                        zero.policy=TRUE, tol.solve = 1e-30)
   
   stargazer(sac.pr.1, sac.pr.2, sac.pr.3, sac.pr.4,
             sac.pr.5, sac.pr.6, sac.pr.7, sac.pr.8,
@@ -695,4 +697,43 @@ if(SARAR) {
   ) 
 }
 
-test <- summary(impacts(sac.mort.2,listw = lw, R = 500),zstats = T)
+## SAC model impact
+impact_summary_death_CS <- summary(impacts(sac.mort.all, listw = lw,
+                                                  R = 1000), zstats = TRUE, short = T) 
+impact_summary_conf_CS <- summary(impacts(sac.pr.all, listw = lw,
+                                           R = 1000), zstats = TRUE, short = T) 
+source('04_Code/07_AF_OutputSplmImpactFunction_v1.R')
+impact_summary_death_CS_variable_names <- 
+  c('Open Water (%)', 'Open Space Developed Area (%)',"Low Intensity Developed Area (%)",
+    "Medium Intensity Developed Area (%)",'High Intensity Developed Area (%)',
+    'Deciduous Forest (%)','Evergreen Forest (%)','Mixed Forest (%)', 'Shrub (%)',
+    'Grassland (%)', 'Woody Wetlands (%)','Emergent Herbaceous Wetlands (%)',
+    "Prevalence Rate (cap/1000)",'Gathering Restrictions (days)','Transport Closing (days)',
+    'Staying Home (days)',"Internal MoRe (days)", "International MoRe (days)",
+    'Population 15-44 (%)','Population 45-64 (%)', 'Population >= 65 (%)', 'Black People (%)', 
+    'Hispanic People (%)',  'Male (%)','Umemployment Rate', 'Median Household Income (logatithm)',
+    'Poverty Rate (%)', 'Adults Without High School Diploma (%)','Poor Health Rate (%)',  
+    'Poor Physical Health (days)', "Poor Mental Health (days)",'Adult Smoking Rate (%)',
+    'Obesity Rate (%)','Physical Inactivity Rate (%)','Having Access To Exercise Opportunities (%)', 
+    "Hospital Beds (bed/1000)",'Average Temperature In Summer','Average Temperature In Winter', 
+    'Average Relative Humidity In Summer', 'Average Relative Humidity In Winter','PM2.5')
+impact_summary_conf_CS_variable_names <- 
+  c('Open Water (%)', 'Open Space Developed Area (%)',"Low Intensity Developed Area (%)",
+    "Medium Intensity Developed Area (%)",'High Intensity Developed Area (%)',
+    'Deciduous Forest (%)','Evergreen Forest (%)','Mixed Forest (%)', 'Shrub (%)',
+    'Grassland (%)', 'Woody Wetlands (%)','Emergent Herbaceous Wetlands (%)',
+    'Gathering Restrictions (days)','Transport Closing (days)',
+    'Staying Home (days)',"Internal MoRe (days)", "International MoRe (days)",
+    'Population 15-44 (%)','Population 45-64 (%)', 'Population >= 65 (%)', 'Black People (%)', 
+    'Hispanic People (%)',  'Male (%)','Umemployment Rate', 'Median Household Income (logatithm)',
+    'Poverty Rate (%)', 'Adults Without High School Diploma (%)','Poor Health Rate (%)',  
+    'Poor Physical Health (days)', "Poor Mental Health (days)",'Adult Smoking Rate (%)',
+    'Obesity Rate (%)','Physical Inactivity Rate (%)','Having Access To Exercise Opportunities (%)', 
+    "Hospital Beds (bed/1000)",'Average Temperature In Summer','Average Temperature In Winter', 
+    'Average Relative Humidity In Summer', 'Average Relative Humidity In Winter','PM2.5')
+(impact.table.sac.death <- 
+    output_SPML_model_impacts(impact_summary_death_CS, impact_summary_death_CS_variable_names))
+(impact.table.sac.conf <- 
+    output_SPML_model_impacts(impact_summary_conf_CS, impact_summary_conf_CS_variable_names))
+
+save.image("Temp/02_SlmResultCross.RData")

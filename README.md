@@ -31,14 +31,18 @@ COVID19 Package: confirmed cases, deaths, population, restrictions information.
 [05_DW_MortalityPrevalenceQuarterlyPanel_v1.R](04_Code/05_DW_MortalityPrevalenceQuarterlyPanel_v1.R): This script make the data set, [panel_NDVI_mortality_prevalence.csv](02_RawData/panel_NDVI_mortality_prevalence.csv), which includes "stringency_index", "NDVI_perc", "tem_c", "NLT", "confirmed_per1000", and "deaths_per1000". With this **quarterly panel data set**, we could perform the panel regressions and even spatial panel regressions. "NDVI"" represents greenery. "tem_c" represents temperature. "NLT" represents nighttime light. The counties should be richer, whose nighttime light are brighter.  
 [06_AN_RegressionPrevalenceMortalityNDVIPanel_v0.R](04_Code/06_AN_RegressionPrevalenceMortalityNDVIPanel_v0.R): This script mainly perform panel model, including "plm" and "splm". Currently, we use both spatial lag and spatial error in the main model. The basic data is quarterly, [panel_NDVI_mortality_prevalence.csv](02_RawData/panel_NDVI_mortality_prevalence.csv), including "tem_c", "NTL", "NDVI_perc", etc.  
 [07_AF_OutputSplmImpactFunction_v1.R](04_Code/07_AF_OutputSplmImpactFunction_v1.R): this script is the function to output spml model impacts, which has been stored in the AssistantFunction repo <https://github.com/MichaelChaoLi-cpu/AssistantFuctions>.  
-[08_DW_MortalityPrevalenceMonthlyPanel_v1.R](04_Code/08_DW_MortalityPrevalenceMonthlyPanel_v1.R): This script make the data set, [panel_NDVI_mortality_prevalence_monthly.csv](02_RawData/panel_NDVI_mortality_prevalence_monthly.csv), which includes "stringency_index", "NDVI_perc", "tem_c", "NLT", "confirmed_per1000", and "deaths_per1000". With this **monthly panel data set**, we could perform the panel regressions and even spatial panel regressions.    
+[08_DW_MortalityPrevalenceMonthlyPanel_v1.R](04_Code/08_DW_MortalityPrevalenceMonthlyPanel_v1.R): This script make the data set, [panel_NDVI_mortality_prevalence_monthly.csv](02_RawData/panel_NDVI_mortality_prevalence_monthly.csv), which includes "stringency_index", "NDVI_perc", "tem_c", "NLT", "confirmed_per1000", and "deaths_per1000". With this **monthly panel data set**, we could perform the panel regressions and even spatial panel regressions.   
+[09_AN_PrevalenceMortalityNDVIMonthlyPanel_v0.R](04_Code/09_AN_PrevalenceMortalityNDVIMonthlyPanel_v0.R): This script mainly perform panel model, including "plm" and "splm", based on the monthly panel data set, [panel_NDVI_mortality_prevalence_monthly.csv](02_RawData/panel_NDVI_mortality_prevalence_monthly.csv). However, they are out of memory. Therefore, aborted!
   
 ## Workflow  
 **WF.A: 01 -> 03 -> 04 -> END**  
 **WF.A.01.03**: This step provides the data to perform OLS. According to the results of OLS, the residuals are spatially clustering. Though GWR is considered, the poor results of GWR make us reject it.  
 **WF.A.03.04**: This step makes us try to use other spatial models.  
   
-**WF.B: 02 -> 05 -> 07 -> END**  
+**WF.B: 02 -> 05 -> 06 -> END**  
 **WF.B.02.05**: This step help us get the **quarterly panel data** set to detect whether greenery is able to prevent COVID-19.  
 **WF.B.05.06**: This step performs the panel regressions including ordinary (plm) and spatial (splm) based on the **quarterly panel data**.  
+  
+**WF.B: 02 -> 08 -> 09 -> END**  
+Out of memory! Aborted!  
 
