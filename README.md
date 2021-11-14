@@ -4,7 +4,7 @@ This is the research on the relationship between COVID-19 and Land Cover as well
 ## Data  
 ### Used in 01_DW_MortalityPrevalenceLandCoverCross_v1.R  
 COVID19 Package: confirmed cases, deaths, population, restrictions information.  
-[MainLand_LC30_Area.dbf](01_Raster/02_LandCoverTable/MainLand_LC30_Area.dbf): downlaoded from <https://www.mrlc.gov/data?f%5B0%5D=category%3ALand%20Cover>. This data set is about 2016 land cover, a tif file, which should be extracted by geoprocessiong. The data are about percentage in the counties.  
+[LC_2001.dbf](01_Raster/02_LandCoverTable/LC_2001.dbf) - [LC_2019.dbf](01_Raster/02_LandCoverTable/LC_2019.dbf): downlaoded from <https://www.mrlc.gov/data?f%5B0%5D=category%3ALand%20Cover>. This data set is about 2001 - 2019 land cover, eight tif files, which should be extracted by geoprocessiong. The data are about percentage in the counties.  
 [Unemployment.xls](02_RawData/Unemployment.xls): downlaoded from <https://www.ers.usda.gov/data-products/county-level-data-sets/download-data/>.  
 [PovertyEstimates.csv](02_RawData/PovertyEstimates.csv): downloaded from <https://www.ers.usda.gov/data-products/county-level-data-sets/download-data/>. 
 [Education.csv](02_RawData/Education.csv): downloaded from <https://www.ers.usda.gov/data-products/county-level-data-sets/download-data/>.  
@@ -12,7 +12,7 @@ cc-est2019-alldata.csv (Not uploaded): downloaded from <https://www.census.gov/d
 (obese_what_inactive.xls)[02_RawData/obese_what_inactive.xls]: downloaded from <https://www.countyhealthrankings.org/explore-health-rankings/rankings-data-documentation>.  
 (hospitalBed.csv)[02_RawData/hospitalBed.csv]: downloaded from <https://hifld-geoplatform.opendata.arcgis.com/datasets/hospitals/data>.  
 (temp_seasonal_county.csv)[02_RawData/temp_seasonal_county.csv]: downloaded from <https://www.northwestknowledge.net/metdata/data/>. This data set is about temperature, and humidity.  
-(county_pm25.csv)[02_RawData/county_pm25.csv]: downloaded from <https://github.com/wxwx1993/PM_COVID/tree/master/Data>.  
+(county_pm25.csv)[02_RawData/county_pm25.csv]: downloaded from <https://github.com/MichaelChaoLi-cpu/On-road_Transportation_PM2.5/blob/main/Data/dataset.csv>.  
 ### Used in 02_DW_NDVITemperatureQuarterly_v1.R
 "NDVI" this is raw data, which should be multiply by the factor (0.0001). MOD13A3 1 km monthly NDVI   
 "DayTem" this is raw data, which should be multiply by the factor (0.02 K). MOD11C3 0.05 monthly  

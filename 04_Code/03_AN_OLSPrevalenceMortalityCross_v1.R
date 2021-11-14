@@ -365,34 +365,6 @@ stargazer(model.pr.1, model.pr.2, model.pr.3, model.pr.4, model.pr.5, model.pr.6
 suitable <- F
 if(suitable)
 {
-  # Moran I Test
-  tes <- dataset %>%
-    dplyr::select("Open_Water_perc",
-                  "Developed_Open_Space_perc","Developed_Low_Intensity_perc",
-                  "Developed_Medium_Intensity_perc",
-                  "Developed_High_Intensity_perc","Barren_Land_perc","Deciduous_Forest_perc",
-                  "Evergreen_Forest_perc","Mixed_Forest_perc","Shrub_perc",
-                  "Grassland_perc","Pasture_perc","Cultivated_Crops_perc",
-                  "Woody_Wetlands_perc","Emergent_Herbaceous_Wetlands_perc",
-                  incidence_proportion, 
-                  gatherings_restrictions, transport_closing,
-                  stay_home_restrictions, internal_movement_restrictions, 
-                  international_movement_restrictions, pop_density, mortality,
-                  age15_44, age45_64, age65_99, black_rate, hispanic_rate, male,
-                  Unemployment_rate_2019, log_Median_Household_Income_2018,
-                  poverty_rate, less_than_high_school,  
-                  poor_health_rate_2019, poor_physical_days_2019, poor_mental_days_2019,
-                  smoker_rate_2019, obesity_rate_2019, physical_inactivity_2019,
-                  exercise_opportunities_rate_2019,
-                  hospital_beds_per_1000, summer_tmmx_mean, winter_tmmx_mean, summer_rmax_mean,
-                  winter_rmax_mean, pm25_mean, key_numeric
-    ) %>% na.omit()
-  us_shape <- readOGR(dsn = "01_Raster\\01_Boundary", layer = "cb_2017_us_county_20m84")
-  us_shape <- geo_join(us_shape, tes, 'CountyFIPS', 'key_numeric', how = 'inner')
-  plot(us_shape)
-  rm(tes)
-  gc()
-  
   nb <- poly2nb(us_shape, queen = T)
   lw <- nb2listw(nb, style="W",zero.policy=T) 
   
@@ -411,114 +383,128 @@ if(suitable)
     i = i + 1
   }
   gc()
-  
+  lm.morantest(model.mort.all, lw, zero.policy = T)
+  lm.morantest(model.pr.all, lw, zero.policy = T)
   
   # GWR
-  GWRbandwidth.1 <- bw.gwr(reg.form.mort(variables.in.reg.form[1]), data = us_shape, 
-                         adaptive = F)
-  gwr.model.1 <- gwr.basic(reg.form.mort(variables.in.reg.form[1]), data = us_shape,
-                         bw = GWRbandwidth.1, adaptive = F)
-  GWRbandwidth.2 <- bw.gwr(reg.form.mort(variables.in.reg.form[2]), data = us_shape, 
+  stop_use <- T
+  if(stop_use){
+    GWRbandwidth.1 <- bw.gwr(reg.form.mort(variables.in.reg.form[1]), data = us_shape, 
                            adaptive = F)
-  gwr.model.2 <- gwr.basic(reg.form.mort(variables.in.reg.form[2]), data = us_shape,
-                           bw = GWRbandwidth.2, adaptive = F)
-  GWRbandwidth.3 <- bw.gwr(reg.form.mort(variables.in.reg.form[3]), data = us_shape, 
-                           adaptive = F)
-  gwr.model.3 <- gwr.basic(reg.form.mort(variables.in.reg.form[3]), data = us_shape,
-                           bw = GWRbandwidth.3, adaptive = F)
-  GWRbandwidth.4 <- bw.gwr(reg.form.mort(variables.in.reg.form[4]), data = us_shape, 
-                           adaptive = F)
-  gwr.model.4 <- gwr.basic(reg.form.mort(variables.in.reg.form[4]), data = us_shape,
-                           bw = GWRbandwidth.4, adaptive = F)
-  GWRbandwidth.5 <- bw.gwr(reg.form.mort(variables.in.reg.form[5]), data = us_shape, 
-                           adaptive = F)
-  gwr.model.5 <- gwr.basic(reg.form.mort(variables.in.reg.form[5]), data = us_shape,
-                           bw = GWRbandwidth.5, adaptive = F)
-  GWRbandwidth.6 <- bw.gwr(reg.form.mort(variables.in.reg.form[6]), data = us_shape, 
-                           adaptive = F)
-  gwr.model.6 <- gwr.basic(reg.form.mort(variables.in.reg.form[6]), data = us_shape,
-                           bw = GWRbandwidth.6, adaptive = F)
-  GWRbandwidth.7 <- bw.gwr(reg.form.mort(variables.in.reg.form[7]), data = us_shape, 
-                           adaptive = F)
-  gwr.model.7 <- gwr.basic(reg.form.mort(variables.in.reg.form[7]), data = us_shape,
-                           bw = GWRbandwidth.7, adaptive = F)
-  GWRbandwidth.8 <- bw.gwr(reg.form.mort(variables.in.reg.form[8]), data = us_shape, 
-                           adaptive = F)
-  gwr.model.8 <- gwr.basic(reg.form.mort(variables.in.reg.form[8]), data = us_shape,
-                           bw = GWRbandwidth.8, adaptive = F)
-  GWRbandwidth.9 <- bw.gwr(reg.form.mort(variables.in.reg.form[9]), data = us_shape, 
-                           adaptive = F)
-  gwr.model.9 <- gwr.basic(reg.form.mort(variables.in.reg.form[9]), data = us_shape,
-                           bw = GWRbandwidth.9, adaptive = F)
-  GWRbandwidth.10 <- bw.gwr(reg.form.mort(variables.in.reg.form[10]), data = us_shape, 
-                           adaptive = F)
-  gwr.model.10 <- gwr.basic(reg.form.mort(variables.in.reg.form[10]), data = us_shape,
-                           bw = GWRbandwidth.10, adaptive = F)
-  GWRbandwidth.11 <- bw.gwr(reg.form.mort(variables.in.reg.form[11]), data = us_shape, 
-                           adaptive = F)
-  gwr.model.11 <- gwr.basic(reg.form.mort(variables.in.reg.form[11]), data = us_shape,
-                           bw = GWRbandwidth.11, adaptive = F)
-  GWRbandwidth.12 <- bw.gwr(reg.form.mort(variables.in.reg.form[12]), data = us_shape, 
-                           adaptive = F)
-  gwr.model.12 <- gwr.basic(reg.form.mort(variables.in.reg.form[12]), data = us_shape,
-                           bw = GWRbandwidth.12, adaptive = F)
-  GWRbandwidth.13 <- bw.gwr(reg.form.mort(variables.in.reg.form[13]), data = us_shape, 
-                           adaptive = F)
-  gwr.model.13 <- gwr.basic(reg.form.mort(variables.in.reg.form[13]), data = us_shape,
-                           bw = GWRbandwidth.13, adaptive = F)
-  GWRbandwidth.14 <- bw.gwr(reg.form.mort(variables.in.reg.form[14]), data = us_shape, 
-                           adaptive = F)
-  gwr.model.14 <- gwr.basic(reg.form.mort(variables.in.reg.form[14]), data = us_shape,
-                           bw = GWRbandwidth.14, adaptive = F)
-  GWRbandwidth.15 <- bw.gwr(reg.form.mort(variables.in.reg.form[15]), data = us_shape, 
-                           adaptive = F)
-  gwr.model.15 <- gwr.basic(reg.form.mort(variables.in.reg.form[15]), data = us_shape,
-                           bw = GWRbandwidth.15, adaptive = F)
-  
-  (abs(gwr.model.1$SDF$Open_Water_perc_TV) > 1.645) %>% summary()
-  (abs(gwr.model.2$SDF$Developed_Open_Space_perc_TV ) > 1.645) %>% summary()
-  (abs(gwr.model.3$SDF$Developed_Low_Intensity_perc_TV ) > 1.645) %>% summary()
-  (abs(gwr.model.4$SDF$Developed_Medium_Intensity_perc_TV ) > 1.645) %>% summary()
-  (abs(gwr.model.5$SDF$Developed_High_Intensity_perc_TV ) > 1.645) %>% summary()
-  (abs(gwr.model.6$SDF$Barren_Land_perc_TV) > 1.645) %>% summary()
-  (abs(gwr.model.7$SDF$Deciduous_Forest_perc_TV) > 1.645) %>% summary()
-  (abs(gwr.model.8$SDF$Evergreen_Forest_perc_TV) > 1.645) %>% summary()
-  (abs(gwr.model.9$SDF$Mixed_Forest_perc_TV) > 1.645) %>% summary()
-  (abs(gwr.model.10$SDF$Shrub_perc_TV) > 1.645) %>% summary()
-  (abs(gwr.model.11$SDF$Grassland_perc_TV) > 1.645) %>% summary()
-  (abs(gwr.model.12$SDF$Pasture_perc_TV) > 1.645) %>% summary()
-  (abs(gwr.model.13$SDF$Cultivated_Crops_perc_TV) > 1.645) %>% summary()
-  (abs(gwr.model.14$SDF$Woody_Wetlands_perc_TV) > 1.645) %>% summary()
-  (abs(gwr.model.15$SDF$Emergent_Herbaceous_Wetlands_perc_TV) > 1.645) %>% summary()
-  
-  tm_shape(gwr.model.1$SDF) +
+    gwr.model.1 <- gwr.basic(reg.form.mort(variables.in.reg.form[1]), data = us_shape,
+                           bw = GWRbandwidth.1, adaptive = F)
+    GWRbandwidth.2 <- bw.gwr(reg.form.mort(variables.in.reg.form[2]), data = us_shape, 
+                             adaptive = F)
+    gwr.model.2 <- gwr.basic(reg.form.mort(variables.in.reg.form[2]), data = us_shape,
+                             bw = GWRbandwidth.2, adaptive = F)
+    GWRbandwidth.3 <- bw.gwr(reg.form.mort(variables.in.reg.form[3]), data = us_shape, 
+                             adaptive = F)
+    gwr.model.3 <- gwr.basic(reg.form.mort(variables.in.reg.form[3]), data = us_shape,
+                             bw = GWRbandwidth.3, adaptive = F)
+    GWRbandwidth.4 <- bw.gwr(reg.form.mort(variables.in.reg.form[4]), data = us_shape, 
+                             adaptive = F)
+    gwr.model.4 <- gwr.basic(reg.form.mort(variables.in.reg.form[4]), data = us_shape,
+                             bw = GWRbandwidth.4, adaptive = F)
+    GWRbandwidth.5 <- bw.gwr(reg.form.mort(variables.in.reg.form[5]), data = us_shape, 
+                             adaptive = F)
+    gwr.model.5 <- gwr.basic(reg.form.mort(variables.in.reg.form[5]), data = us_shape,
+                             bw = GWRbandwidth.5, adaptive = F)
+    GWRbandwidth.6 <- bw.gwr(reg.form.mort(variables.in.reg.form[6]), data = us_shape, 
+                             adaptive = F)
+    gwr.model.6 <- gwr.basic(reg.form.mort(variables.in.reg.form[6]), data = us_shape,
+                             bw = GWRbandwidth.6, adaptive = F)
+    GWRbandwidth.7 <- bw.gwr(reg.form.mort(variables.in.reg.form[7]), data = us_shape, 
+                             adaptive = F)
+    gwr.model.7 <- gwr.basic(reg.form.mort(variables.in.reg.form[7]), data = us_shape,
+                             bw = GWRbandwidth.7, adaptive = F)
+    GWRbandwidth.8 <- bw.gwr(reg.form.mort(variables.in.reg.form[8]), data = us_shape, 
+                             adaptive = F)
+    gwr.model.8 <- gwr.basic(reg.form.mort(variables.in.reg.form[8]), data = us_shape,
+                             bw = GWRbandwidth.8, adaptive = F)
+    GWRbandwidth.9 <- bw.gwr(reg.form.mort(variables.in.reg.form[9]), data = us_shape, 
+                             adaptive = F)
+    gwr.model.9 <- gwr.basic(reg.form.mort(variables.in.reg.form[9]), data = us_shape,
+                             bw = GWRbandwidth.9, adaptive = F)
+    GWRbandwidth.10 <- bw.gwr(reg.form.mort(variables.in.reg.form[10]), data = us_shape, 
+                             adaptive = F)
+    gwr.model.10 <- gwr.basic(reg.form.mort(variables.in.reg.form[10]), data = us_shape,
+                             bw = GWRbandwidth.10, adaptive = F)
+    GWRbandwidth.11 <- bw.gwr(reg.form.mort(variables.in.reg.form[11]), data = us_shape, 
+                             adaptive = F)
+    gwr.model.11 <- gwr.basic(reg.form.mort(variables.in.reg.form[11]), data = us_shape,
+                             bw = GWRbandwidth.11, adaptive = F)
+    GWRbandwidth.12 <- bw.gwr(reg.form.mort(variables.in.reg.form[12]), data = us_shape, 
+                             adaptive = F)
+    gwr.model.12 <- gwr.basic(reg.form.mort(variables.in.reg.form[12]), data = us_shape,
+                             bw = GWRbandwidth.12, adaptive = F)
+    GWRbandwidth.13 <- bw.gwr(reg.form.mort(variables.in.reg.form[13]), data = us_shape, 
+                             adaptive = F)
+    gwr.model.13 <- gwr.basic(reg.form.mort(variables.in.reg.form[13]), data = us_shape,
+                             bw = GWRbandwidth.13, adaptive = F)
+    GWRbandwidth.14 <- bw.gwr(reg.form.mort(variables.in.reg.form[14]), data = us_shape, 
+                             adaptive = F)
+    gwr.model.14 <- gwr.basic(reg.form.mort(variables.in.reg.form[14]), data = us_shape,
+                             bw = GWRbandwidth.14, adaptive = F)
+    GWRbandwidth.15 <- bw.gwr(reg.form.mort(variables.in.reg.form[15]), data = us_shape, 
+                             adaptive = F)
+    gwr.model.15 <- gwr.basic(reg.form.mort(variables.in.reg.form[15]), data = us_shape,
+                             bw = GWRbandwidth.15, adaptive = F)
+    
+    (abs(gwr.model.1$SDF$Open_Water_perc_TV) > 1.645) %>% summary()
+    (abs(gwr.model.2$SDF$Developed_Open_Space_perc_TV ) > 1.645) %>% summary()
+    (abs(gwr.model.3$SDF$Developed_Low_Intensity_perc_TV ) > 1.645) %>% summary()
+    (abs(gwr.model.4$SDF$Developed_Medium_Intensity_perc_TV ) > 1.645) %>% summary()
+    (abs(gwr.model.5$SDF$Developed_High_Intensity_perc_TV ) > 1.645) %>% summary()
+    (abs(gwr.model.6$SDF$Barren_Land_perc_TV) > 1.645) %>% summary()
+    (abs(gwr.model.7$SDF$Deciduous_Forest_perc_TV) > 1.645) %>% summary()
+    (abs(gwr.model.8$SDF$Evergreen_Forest_perc_TV) > 1.645) %>% summary()
+    (abs(gwr.model.9$SDF$Mixed_Forest_perc_TV) > 1.645) %>% summary()
+    (abs(gwr.model.10$SDF$Shrub_perc_TV) > 1.645) %>% summary()
+    (abs(gwr.model.11$SDF$Grassland_perc_TV) > 1.645) %>% summary()
+    (abs(gwr.model.12$SDF$Pasture_perc_TV) > 1.645) %>% summary()
+    (abs(gwr.model.13$SDF$Cultivated_Crops_perc_TV) > 1.645) %>% summary()
+    (abs(gwr.model.14$SDF$Woody_Wetlands_perc_TV) > 1.645) %>% summary()
+    (abs(gwr.model.15$SDF$Emergent_Herbaceous_Wetlands_perc_TV) > 1.645) %>% summary()
+    
+    tm_shape(gwr.model.1$SDF) +
+      tm_polygons(col = 'Open_Water_perc', pal = "-RdYlGn")
+    tm_shape(gwr.model.2$SDF) +
+      tm_polygons(col = 'Developed_Open_Space_perc', pal = "-RdYlGn")
+    tm_shape(gwr.model.3$SDF) +
+      tm_polygons(col = 'Developed_Low_Intensity_perc', pal = "-RdYlGn")
+    tm_shape(gwr.model.4$SDF) +
+      tm_polygons(col = 'Developed_Medium_Intensity_perc', pal = "-RdYlGn")
+    tm_shape(gwr.model.5$SDF) +
+      tm_polygons(col = 'Developed_High_Intensity_perc', pal = "-RdYlGn")
+    tm_shape(gwr.model.6$SDF) +
+      tm_polygons(col = 'Barren_Land_perc', pal = "-RdYlGn")
+    tm_shape(gwr.model.7$SDF) +
+      tm_polygons(col = 'Deciduous_Forest_perc', pal = "-RdYlGn")
+    tm_shape(gwr.model.8$SDF) +
+      tm_polygons(col = 'Evergreen_Forest_perc', pal = "-RdYlGn")
+    tm_shape(gwr.model.9$SDF) +
+      tm_polygons(col = 'Mixed_Forest_perc', pal = "-RdYlGn")
+    tm_shape(gwr.model.10$SDF) +
+      tm_polygons(col = 'Shrub_perc', pal = "-RdYlGn")
+    tm_shape(gwr.model.11$SDF) +
+      tm_polygons(col = 'Grassland_perc', pal = "-RdYlGn")
+    tm_shape(gwr.model.12$SDF) +
+      tm_polygons(col = 'Pasture_perc', pal = "-RdYlGn")
+    tm_shape(gwr.model.13$SDF) +
+      tm_polygons(col = 'Cultivated_Crops_perc', pal = "-RdYlGn")
+    tm_shape(gwr.model.14$SDF) +
+      tm_polygons(col = 'Woody_Wetlands_perc', pal = "-RdYlGn")
+    tm_shape(gwr.model.15$SDF) +
+      tm_polygons(col = 'Emergent_Herbaceous_Wetlands_perc', pal = "-RdYlGn")
+  }
+  GWRbandwidth.mort <- bw.gwr(reg.form.mort.all, data = us_shape, 
+                              adaptive = F)
+  gwr.model.mort <- gwr.basic(reg.form.mort.all, data = us_shape,
+                              bw = GWRbandwidth.mort, adaptive = F)
+  tm_shape(gwr.model.mort$SDF) +
     tm_polygons(col = 'Open_Water_perc', pal = "-RdYlGn")
-  tm_shape(gwr.model.2$SDF) +
-    tm_polygons(col = 'Developed_Open_Space_perc', pal = "-RdYlGn")
-  tm_shape(gwr.model.3$SDF) +
-    tm_polygons(col = 'Developed_Low_Intensity_perc', pal = "-RdYlGn")
-  tm_shape(gwr.model.4$SDF) +
-    tm_polygons(col = 'Developed_Medium_Intensity_perc', pal = "-RdYlGn")
-  tm_shape(gwr.model.5$SDF) +
-    tm_polygons(col = 'Developed_High_Intensity_perc', pal = "-RdYlGn")
-  tm_shape(gwr.model.6$SDF) +
-    tm_polygons(col = 'Barren_Land_perc', pal = "-RdYlGn")
-  tm_shape(gwr.model.7$SDF) +
-    tm_polygons(col = 'Deciduous_Forest_perc', pal = "-RdYlGn")
-  tm_shape(gwr.model.8$SDF) +
-    tm_polygons(col = 'Evergreen_Forest_perc', pal = "-RdYlGn")
-  tm_shape(gwr.model.9$SDF) +
-    tm_polygons(col = 'Mixed_Forest_perc', pal = "-RdYlGn")
-  tm_shape(gwr.model.10$SDF) +
-    tm_polygons(col = 'Shrub_perc', pal = "-RdYlGn")
-  tm_shape(gwr.model.11$SDF) +
-    tm_polygons(col = 'Grassland_perc', pal = "-RdYlGn")
-  tm_shape(gwr.model.12$SDF) +
-    tm_polygons(col = 'Pasture_perc', pal = "-RdYlGn")
-  tm_shape(gwr.model.13$SDF) +
-    tm_polygons(col = 'Cultivated_Crops_perc', pal = "-RdYlGn")
-  tm_shape(gwr.model.14$SDF) +
-    tm_polygons(col = 'Woody_Wetlands_perc', pal = "-RdYlGn")
-  tm_shape(gwr.model.15$SDF) +
-    tm_polygons(col = 'Emergent_Herbaceous_Wetlands_perc', pal = "-RdYlGn")
+  GWRbandwidth.pr <- bw.gwr(reg.form.pr.all, data = us_shape, 
+                            adaptive = F)
+  gwr.model.pr <- gwr.basic(GWRbandwidth.pr, data = us_shape,
+                            bw = GWRbandwidth.pr, adaptive = F)
 }

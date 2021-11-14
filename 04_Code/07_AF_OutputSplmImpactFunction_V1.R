@@ -36,9 +36,9 @@ output_SPML_model_impacts <- function(impact_summary, variable_name){
       col3 = ifelse(col6 < 0.1, paste0(col3,"*"), col3),
       col3 = ifelse(col6 < 0.05, paste0(col3,"*"), col3),
       col3 = ifelse(col6 < 0.01, paste0(col3,"*"), col3),
-      col4 = ifelse(col7 < 0.1, paste0(col4,"*"), col7),
-      col4 = ifelse(col7 < 0.05, paste0(col4,"*"), col7),
-      col4 = ifelse(col7 < 0.01, paste0(col4,"*"), col7)
+      col4 = ifelse(col7 < 0.1, paste0(col4,"*"), col4),
+      col4 = ifelse(col7 < 0.05, paste0(col4,"*"), col4),
+      col4 = ifelse(col7 < 0.01, paste0(col4,"*"), col4)
       )
   output <- output[,c(1:4)]
   

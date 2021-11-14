@@ -47,7 +47,7 @@ tes <- dataset %>%
   ) %>% na.omit()
 us_shape <- readOGR(dsn = "01_Raster\\01_Boundary", layer = "cb_2017_us_county_20m84")
 us_shape <- geo_join(us_shape, tes, 'CountyFIPS', 'key_numeric', how = 'inner')
-plot(us_shape) # now there are 3081 records
+#plot(us_shape) # now there are 3103 records
 rm(tes)
 gc() 
 
@@ -237,7 +237,7 @@ if(SPATIAL_MODEL_TEST) {
                                 test=c("RLMerr", "RLMlag", "SARMA")))
 }
   
-SAR_LAG <- T # if run this block, then T
+SAR_LAG <- F # if run this block, then T
 if(SAR_LAG) {
   sar.mort.1 <- lagsarlm(reg.form.mort.1, data = us_shape@data, listw = lw, 
                          type = "lag", zero.policy=TRUE, tol.solve = 1e-30)
@@ -389,7 +389,7 @@ if(SAR_LAG) {
   ) 
 }
 
-SAR_ERROR <- T # if run this block, then T
+SAR_ERROR <- F # if run this block, then T
 if(SAR_ERROR) {
   error.mort.1 <- errorsarlm(reg.form.mort.1, data = us_shape@data, listw = lw, 
                           zero.policy=TRUE, tol.solve = 1e-30)
@@ -541,7 +541,7 @@ if(SAR_ERROR) {
   ) 
 }
 
-SARAR <- T # if run this block, then T
+SARAR <- F # if run this block, then T
 if(SARAR) {
   sac.mort.1 <- sacsarlm(reg.form.mort.1, data = us_shape@data, listw = lw, 
                            zero.policy=TRUE, tol.solve = 1e-30)
@@ -698,6 +698,10 @@ if(SARAR) {
 }
 
 ## SAC model impact
+sac.mort.all <- sacsarlm(reg.form.mort.all, data = us_shape@data, listw = lw, 
+                         zero.policy=TRUE, tol.solve = 1e-30)
+sac.pr.all <- sacsarlm(reg.form.pr.all, data = us_shape@data, listw = lw, 
+                       zero.policy=TRUE, tol.solve = 1e-30)
 impact_summary_death_CS <- summary(impacts(sac.mort.all, listw = lw,
                                                   R = 1000), zstats = TRUE, short = T) 
 impact_summary_conf_CS <- summary(impacts(sac.pr.all, listw = lw,
@@ -735,5 +739,10 @@ impact_summary_conf_CS_variable_names <-
     output_SPML_model_impacts(impact_summary_death_CS, impact_summary_death_CS_variable_names))
 (impact.table.sac.conf <- 
     output_SPML_model_impacts(impact_summary_conf_CS, impact_summary_conf_CS_variable_names))
+
+impact.table.sac.death %>% 
+  write.csv("03_Results/04_01RE_SACMortalityLandCoverCross.csv")
+impact.table.sac.conf %>% 
+  write.csv("03_Results/04_02RE_SACPrevalenceLandCoverCross.csv")
 
 save.image("Temp/02_SlmResultCross.RData")

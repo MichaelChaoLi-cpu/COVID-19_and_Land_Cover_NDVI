@@ -5,6 +5,9 @@
 # dataset.Rdata: "incidence_proportion" incidence_proportion = confirmed / population * 1000.
 # dataset.Rdata: "mortality" mortality = deaths / population * 1000.
 
+# v2: we update the land cover. v1's data are the data in 2016, but v2's data are 
+#     the average values from 2001 to 2019
+
 # end
 
 library(readr)
@@ -65,12 +68,20 @@ rm(restrictions)
 
 
 ###------------land cover https://www.mrlc.gov/data?f%5B0%5D=category%3ALand%20Cover---
-LC30_2016 <- foreign::read.dbf(file = '01_Raster\\02_LandCoverTable\\MainLand_LC30_Area.dbf', as.is = T)
-ak_2016 <- foreign::read.dbf(file = '01_Raster\\02_LandCoverTable\\AK_LC30_Area.dbf', as.is = T)
-LC30_2016 <- bind_rows(LC30_2016, ak_2016)
-rm(ak_2016)
+LC_2001 <- foreign::read.dbf(file = '01_Raster/02_LandCoverTable/LC_2001.dbf', as.is = T)
+LC_2004 <- foreign::read.dbf(file = '01_Raster/02_LandCoverTable/LC_2004.dbf', as.is = T)
+LC_2006 <- foreign::read.dbf(file = '01_Raster/02_LandCoverTable/LC_2006.dbf', as.is = T)
+LC_2008 <- foreign::read.dbf(file = '01_Raster/02_LandCoverTable/LC_2008.dbf', as.is = T)
+LC_2011 <- foreign::read.dbf(file = '01_Raster/02_LandCoverTable/LC_2011.dbf', as.is = T)
+LC_2013 <- foreign::read.dbf(file = '01_Raster/02_LandCoverTable/LC_2013.dbf', as.is = T)
+LC_2016 <- foreign::read.dbf(file = '01_Raster/02_LandCoverTable/LC_2016.dbf', as.is = T)
+LC_2019 <- foreign::read.dbf(file = '01_Raster/02_LandCoverTable/LC_2019.dbf', as.is = T)
+LC_total <- rbind(LC_2001, LC_2004, LC_2006, LC_2008, LC_2011, LC_2013, LC_2016, LC_2019)
+rm(LC_2001, LC_2004, LC_2006, LC_2008, LC_2011, LC_2013, LC_2016, LC_2019)
+LC_total <- LC_total %>% as.data.frame()
+LC_total <- LC_total %>% aggregate(by = list(LC_total$GEOID), FUN=mean)
 
-LC30_2016 <- LC30_2016 %>%
+LC_total <- LC_total %>%
   rename(
     Unknown = VALUE_0,
     Open_Water = VALUE_11,
@@ -88,21 +99,13 @@ LC30_2016 <- LC30_2016 %>%
     Pasture = VALUE_81,
     Cultivated_Crops = VALUE_82,
     Woody_Wetlands = VALUE_90,
-    Emergent_Herbaceous_Wetlands = VALUE_95,
-    Dward_Scrub = VALUE_51,
-    Sedge = VALUE_72,
-    Moss = VALUE_74
+    Emergent_Herbaceous_Wetlands = VALUE_95
   )
-LC30_2016 <- LC30_2016 %>%
-  mutate(
-    Dward_Scrub =  ifelse(is.na(Dward_Scrub), 0, Dward_Scrub),
-    Sedge = ifelse(is.na(Sedge), 0, Sedge),
-    Moss = ifelse(is.na(Moss), 0, Moss)
-         )
-LC30_2016$FIPS <- LC30_2016$FIPS %>% as.numeric()
-LC30_2016 <- LC30_2016 %>% rename(key_numeric = FIPS)
+LC_total <- LC_total %>% dplyr::select(-GEOID) %>% rename(GEOID = Group.1)
+LC_total$GEOID <- LC_total$GEOID %>% as.numeric()
+LC_total <- LC_total %>% rename(key_numeric = GEOID)
 
-dataset <- merge(covid.data, LC30_2016)
+dataset <- merge(covid.data, LC_total)
 dataset <- dataset %>%
   rowwise() %>%
   mutate(
@@ -110,8 +113,7 @@ dataset <- dataset %>%
       Developed_Low_Intensity + Developed_Medium_Intensity + 
       Developed_High_Intensity + Barren_Land + Deciduous_Forest + 
       Evergreen_Forest + Mixed_Forest + Shrub + Grassland + Pasture + 
-      Cultivated_Crops + Woody_Wetlands + Emergent_Herbaceous_Wetlands +
-      Dward_Scrub + Sedge + Moss
+      Cultivated_Crops + Woody_Wetlands + Emergent_Herbaceous_Wetlands
   )
 switch <- T
 if(switch == T){
@@ -134,12 +136,8 @@ if(switch == T){
       Cultivated_Crops_perc = Cultivated_Crops / TotalArea * 100,
       Woody_Wetlands_perc = Woody_Wetlands / TotalArea * 100,
       Emergent_Herbaceous_Wetlands_perc = Emergent_Herbaceous_Wetlands / TotalArea * 100,
-      Dward_Scrub_perc = Dward_Scrub / TotalArea * 100,
-      Sedge_perc = Sedge / TotalArea * 100,
-      Moss_perc = Moss / TotalArea * 100,
       Green_rate = Deciduous_Forest_perc + Evergreen_Forest_perc + Mixed_Forest_perc + 
-        Shrub_perc + Grassland_perc + Pasture_perc + Cultivated_Crops_perc + Dward_Scrub_perc +
-        Sedge_perc + Moss_perc ,
+        Shrub_perc + Grassland_perc + Pasture_perc + Cultivated_Crops_perc,
       Blue_rate = Open_Water_perc +
         Woody_Wetlands_perc + Emergent_Herbaceous_Wetlands_perc,
       Grey_rate = Developed_Open_Space_perc + Developed_Low_Intensity_perc +
@@ -167,10 +165,7 @@ dataset <- dataset %>%
     Pasture_capi = Pasture / population / 10000,
     Cultivated_Crops_capi = Cultivated_Crops / population / 10000,
     Woody_Wetlands_capi = Woody_Wetlands / population / 10000,
-    Emergent_Herbaceous_Wetlands_capi = Emergent_Herbaceous_Wetlands / population / 10000,
-    Dward_Scrub_perc = Dward_Scrub / population / 10000,
-    Sedge_perc = Sedge / population / 10000,
-    Moss_perc = Moss / population / 10000
+    Emergent_Herbaceous_Wetlands_capi = Emergent_Herbaceous_Wetlands / population / 10000
   ) 
 ###------------land cover https://www.mrlc.gov/data?f%5B0%5D=category%3ALand%20Cover---
 
@@ -387,28 +382,27 @@ dataset <- left_join(dataset, weather)
 rm(weather)
 # Weather Data https://www.northwestknowledge.net/metdata/data/
 
-# PM2.5 https://github.com/wxwx1993/PM_COVID/tree/master/Data
-pm2.5 <- read.csv(file = '02_RawData\\county_pm25.csv')
+# PM2.5 extract data from the https://github.com/MichaelChaoLi-cpu/On-road_Transportation_PM2.5/blob/main/Data/dataset.csv
+pm2.5 <- read.csv(file = '02_RawData\\county_pm25.csv') %>% dplyr::select(-X)
 pm2.5 <- pm2.5 %>% 
   pivot_wider(
     names_from = 'year', 
-    values_from = 'pm25',
+    values_from = 'pm25_ori',
     names_prefix = "pm25"
   ) %>%
   rename(
-    key_numeric = fips
+    key_numeric = GEOID
   )
 pm2.5 <- pm2.5 %>%
-  mutate(pm25_mean = apply(
-    select(pm2.5,-key_numeric), 1, mean)
+  mutate(pm25_mean = rowMeans(dplyr::select(pm2.5,-key_numeric), na.rm = T)
   ) %>%
   select(key_numeric, pm25_mean)
 dataset <- left_join(dataset, pm2.5)
 rm(pm2.5)
-# PM2.5 https://github.com/wxwx1993/PM_COVID/tree/master/Data
+# PM2.5 https://github.com/MichaelChaoLi-cpu/On-road_Transportation_PM2.5/blob/main/Data/dataset.csv
 
 rm(covid.data)
-rm(LC30_2016)
+rm(LC_total)
 dataset <- dataset %>%
   mutate(pop_density = population / TotalArea * 1000000)
 save.image("00_RData\\dataset.Rdata")
