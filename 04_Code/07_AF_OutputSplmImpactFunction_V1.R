@@ -47,9 +47,9 @@ output_SPML_model_impacts <- function(impact_summary, variable_name){
   output <- output %>% arrange(num)
   
   col1.se <- c("", "", "","", "", "","")
-  col2.se <- paste0("(",impact_summary$semat[,1] %>% as.vector() %>% round(6) %>% as.character(),")")
-  col3.se <- paste0("(",impact_summary$semat[,2] %>% as.vector() %>% round(6) %>% as.character(),")")
-  col4.se <- paste0("(",impact_summary$semat[,3] %>% as.vector() %>% round(6) %>% as.character(),")")
+  col2.se <- paste0("(",impact_summary$semat[,1] %>% as.vector() %>% round(6) %>% as.character(),")") %>% as.character()
+  col3.se <- paste0("(",impact_summary$semat[,2] %>% as.vector() %>% round(6) %>% as.character(),")") %>% as.character()
+  col4.se <- paste0("(",impact_summary$semat[,3] %>% as.vector() %>% round(6) %>% as.character(),")") %>% as.character()
   
   output.se <- cbind(col1.se, col2.se, col3.se, col4.se) %>% as.data.frame()
   output.se$num <- c(1:nrow(output.se)) 

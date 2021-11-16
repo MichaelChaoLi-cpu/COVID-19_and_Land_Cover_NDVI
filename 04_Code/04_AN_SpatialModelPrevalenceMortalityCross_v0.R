@@ -48,7 +48,6 @@ tes <- dataset %>%
 us_shape <- readOGR(dsn = "01_Raster\\01_Boundary", layer = "cb_2017_us_county_20m84")
 us_shape <- geo_join(us_shape, tes, 'CountyFIPS', 'key_numeric', how = 'inner')
 #plot(us_shape) # now there are 3103 records
-rm(tes)
 gc() 
 
 variables.in.reg.form = c("Open_Water_perc",
@@ -156,7 +155,7 @@ if(GOT_FORMULAS){
   reg.form.pr.13 <- reg.form.pr(variables.in.reg.form[13])
   reg.form.pr.14 <- reg.form.pr(variables.in.reg.form[14])
   reg.form.pr.15 <- reg.form.pr(variables.in.reg.form[15])
-  reg.form.pr.all <- reg.form.mort(
+  reg.form.pr.all <- reg.form.pr(
     paste0("Open_Water_perc", "+",
            "Developed_Open_Space_perc",  "+","Developed_Low_Intensity_perc",  "+",
            "Developed_Medium_Intensity_perc", "+",
@@ -744,5 +743,48 @@ impact.table.sac.death %>%
   write.csv("03_Results/04_01RE_SACMortalityLandCoverCross.csv")
 impact.table.sac.conf %>% 
   write.csv("03_Results/04_02RE_SACPrevalenceLandCoverCross.csv")
+
+tes <- tes %>%
+  dplyr::select(mortality, incidence_proportion, everything()) %>% as.data.frame()
+stargazer(tes,
+          title = "Table XXX: Test",  type = "text", 
+          no.space = T,
+          covariate.labels = c(
+            "Mortality Rate(cap/1000)", "Prevalence Rate (cap/1000)",
+            'Open Water (%)', 
+            'Open Space Developed Area (%)',                   
+            "Low Intensity Developed Area (%)",
+            "Medium Intensity Developed Area (%)",
+            'High Intensity Developed Area (%)',
+            'Barren Land (%)',
+            'Deciduous Forest (%)',
+            'Evergreen Forest (%)',
+            'Mixed Forest (%)', 'Shrub (%)',
+            'Grassland (%)', 'Pasture (%)',
+            'Cultivated Crops (%)',
+            'Woody Wetlands (%)',
+            'Emergent Herbaceous Wetlands (%)',
+            'Gathering Restrictions (days)',
+            'Transport Closing (days)', 'Staying Home (days)',
+            "Internal MoRe (days)", "International MoRe (days)",
+            #TestCode "Population Density (cap/km2)",
+            'Population 15-44 (%)',
+            'Population 45-64 (%)', 
+            'Population >= 65 (%)', 'Black People (%)', 
+            'Hispanic People (%)',  'Male (%)',
+            'Umemployment Rate', 'Median Household Income (logatithm)',
+            'Poverty Rate (%)', 'Adults Without High School Diploma (%)',
+            'Poor Health Rate (%)',  'Poor Physical Health (days)', "Poor Mental Health (days)",
+            'Adult Smoking Rate (%)', 'Obesity Rate (%)',
+            'Physical Inactivity Rate (%)', 
+            'Having Access To Exercise Opportunities (%)', "Hospital Beds (bed/1000)",
+            'Average Temperature In Summer', 
+            'Average Temperature In Winter', 
+            'Average Relative Humidity In Summer', 'Average Relative Humidity In Winter',
+            'PM2.5'
+          ),
+          iqr = F, out = "03_Results\\CrossSectionalStatisticSummary.html"
+) 
+
 
 save.image("Temp/02_SlmResultCross.RData")

@@ -25,6 +25,7 @@ library(rgdal)
 library(tigris)
 library(spdplyr)
 library(spdep)
+library(stargazer)
 
 source('04_Code/07_AF_OutputSplmImpactFunction_v1.R')
 
@@ -136,9 +137,23 @@ fem.sdm.death <- spml(death.formula,
                       index = c('GEOID', 'cut'), data = merge_df.Q.lag,  listw = listW,
                       model = 'within', spatial.error = "kkp", lag = T)
 
+merge_df.Q.lag.mean <- aggregate(merge_df.Q.lag %>% dplyr::select(confirmed_per1000, deaths_per1000),
+                                 by = list(merge_df.Q.lag$GEOID), FUN = mean)
+merge_df.Q.lag.mean <- rbind(merge_df.Q.lag.mean, merge_df.Q.lag.mean, merge_df.Q.lag.mean,
+                             merge_df.Q.lag.mean, merge_df.Q.lag.mean, merge_df.Q.lag.mean)
 
 summary(fem.sdm.death)
 summary(fem.sdm.conf)
+
+# fem.sdm.death
+y <- merge_df.Q.lag$deaths_per1000 - merge_df.Q.lag.mean$deaths_per1000
+ss.death <- (y - mean(y))^2
+1-sum(fem.sdm.death$residuals^2)/sum(ss.death)
+
+# fem.sdm.conf
+y <- merge_df.Q.lag$confirmed_per1000 - merge_df.Q.lag.mean$confirmed_per1000
+ss.death <- (y - mean(y))^2
+1-sum(fem.sdm.conf$residuals^2)/sum(ss.death)
 
 impact_summary_death <- summary(spdep::impacts(fem.sdm.death, listw = listW,
                                 time = 6, R = 1000), zstats = TRUE, short = T) 
@@ -147,7 +162,7 @@ impact_summary_conf <- summary(spdep::impacts(fem.sdm.conf, listw = listW,
                               time = 6, R = 500), zstats = TRUE, short = T) 
 #note: here must use spdep::impacts otherwise error
 
-variable_name_death <- c("Prevalence (confirmed/1000 cap)", "Preventation Stringency", 
+variable_name_death <- c("Prevalence", "Preventation Stringency", 
                          "NDVI (%)", "Temperature",
                          "NTL", "Time Lag of Prevalence",  "Time Lag of Mortality")
 variable_name_conf <- c( "Preventation Stringency", "NDVI (%)", "Temperature",
@@ -155,4 +170,29 @@ variable_name_conf <- c( "Preventation Stringency", "NDVI (%)", "Temperature",
 (impact.table.sdm.death <- output_SPML_model_impacts(impact_summary_death, variable_name_death))
 (impact.table.sdm.conf <- output_SPML_model_impacts(impact_summary_conf, variable_name_conf))
 
-save.image("Temp/01_SpmlResultQuaterly.RData")
+impact.table.sdm.death %>% 
+  xlsx::write.xlsx("03_Results/04_03RE_SACMortalityLandCoverPanel.xlsx", sheetName = "Sheet1", 
+                   row.names = F)
+impact.table.sdm.conf %>% 
+  xlsx::write.xlsx("03_Results/04_04RE_SACPrevalenceLandCoverPanel.xlsx", sheetName = "Sheet1", 
+                   row.names = F)
+
+#save.image("Temp/01_SpmlResultQuaterly.RData")
+
+PSS <- merge_df.Q %>% 
+  dplyr::select(cut, deaths_per1000, confirmed_per1000, NDVI_perc, tem_c, NTL)
+stargazer(PSS %>% filter(cut == 1) %>% dplyr::select(-cut),
+          PSS %>% filter(cut == 2) %>% dplyr::select(-cut),
+          PSS %>% filter(cut == 3) %>% dplyr::select(-cut),
+          PSS %>% filter(cut == 4) %>% dplyr::select(-cut),
+          PSS %>% filter(cut == 5) %>% dplyr::select(-cut),
+          PSS %>% filter(cut == 6) %>% dplyr::select(-cut),
+          PSS %>% filter(cut == 7) %>% dplyr::select(-cut),
+          title = "Table XXX: Test",  type = "text", 
+          no.space = T,
+          covariate.labels = c(
+            "Mortality Rate(cases/1000)", "Prevalence Rate (cases/1000)",
+            "NDVI (%)", "Temperature (C)", "NTL Index"
+            ),
+          iqr = F, out = "03_Results\\PanelStatisticSummary.html"
+) 
