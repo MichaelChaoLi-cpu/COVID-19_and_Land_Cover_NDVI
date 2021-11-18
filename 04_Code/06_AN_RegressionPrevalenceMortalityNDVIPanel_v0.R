@@ -196,3 +196,30 @@ stargazer(PSS %>% filter(cut == 1) %>% dplyr::select(-cut),
             ),
           iqr = F, out = "03_Results\\PanelStatisticSummary.html"
 ) 
+
+change_ratio <- function(impact_summary, variable_name){
+  col1 <- variable_name
+  col4 <- impact_summary$res$total
+  col4.se <- impact_summary$semat[,3]
+  col7 <- impact_summary$pzmat[,3] 
+  
+  output <- cbind(col4, col4.se, col7) %>% as.data.frame()
+  output <- cbind(col1, output) %>% as.data.frame()
+  colnames(output) <- c("col1", "col4", "col4.se", "col7")
+  
+  output <- output %>% filter(col7 < 0.1)
+  output$lower.95 <- output$col4 - output$col4.se * 1.96
+  output$upper.95 <- output$col4 + output$col4.se * 1.96
+  output$ci95 <- paste0("(", as.character(round(output$lower.95,5)), " - ",
+                        as.character(round(output$upper.95,5)), ")")
+  output$col4 <- round(output$col4, 5)
+  output <- output %>% dplyr::select(col1, col4, ci95)
+  return(output)
+}
+
+change_ratio(impact_summary_death, variable_name_death) %>%
+  xlsx::write.xlsx("03_Results/06_07RE_ImpactMortalityLandCoverPanel.xlsx", sheetName = "Sheet1", 
+                   row.names = F)
+change_ratio(impact_summary_conf, variable_name_conf) %>%
+  xlsx::write.xlsx("03_Results/06_08RE_ImpactPrevalenceLandCoverPanel.xlsx", sheetName = "Sheet1", 
+                   row.names = F)

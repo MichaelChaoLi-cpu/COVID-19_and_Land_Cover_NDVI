@@ -224,3 +224,65 @@ corr.mat <- cor(tes, method = "pearson", use = "complete.obs")
 view(corr.mat)
 cor.test(us_shape@data$smoker_rate_2019, us_shape@data$log_Median_Household_Income_2018)
 cor.test(us_shape@data$pm25_mean, us_shape@data$summer_rmax_mean)
+cor.test(us_shape@data$poverty_rate, us_shape@data$log_Median_Household_Income_2018)
+
+change_ratio <- function(impact_summary, variable_name){
+  col1 <- variable_name
+  col4 <- impact_summary$res$total
+  col4.se <- impact_summary$semat[,3]
+  col7 <- impact_summary$pzmat[,3] 
+  
+  output <- cbind(col4, col4.se, col7) %>% as.data.frame()
+  output <- cbind(col1, output) %>% as.data.frame()
+  colnames(output) <- c("col1", "col4", "col4.se", "col7")
+  
+  output <- output %>% filter(col7 < 0.1)
+  output$lower.95 <- output$col4 - output$col4.se * 1.96
+  output$upper.95 <- output$col4 + output$col4.se * 1.96
+  output$ci95 <- paste0("(", as.character(round(output$lower.95,5)), " - ",
+                        as.character(round(output$upper.95,5)), ")")
+  output$col4 <- round(output$col4, 5)
+  output <- output %>% dplyr::select(col1, col4, ci95)
+  return(output)
+}
+
+change_ratio(impact_summary_death_CS, impact_summary_death_CS_variable_names) %>%
+  xlsx::write.xlsx("03_Results/04_05RE_ImpactMortalityLandCoverCross.xlsx", sheetName = "Sheet1", 
+                   row.names = F)
+change_ratio(impact_summary_conf_CS, impact_summary_conf_CS_variable_names) %>%
+  xlsx::write.xlsx("03_Results/04_06RE_ImpactPrevalenceLandCoverCross.xlsx", sheetName = "Sheet1", 
+                   row.names = F)
+
+moneytary_value <- function(impact_summary, variable_name, income){
+  col1 <- variable_name
+  col4 <- impact_summary$res$total
+  col7 <- impact_summary$pzmat[,3] 
+  
+  output <- cbind(col4, col7) %>% as.data.frame()
+  output <- cbind(col1, output) %>% as.data.frame()
+  colnames(output) <- c("col1", "col4", "col7")
+  income_coeff <- output["log_Median_Household_Income_2018", "col4"]
+  
+  output <- output %>% filter(col7 < 0.1)
+  mean_income <- mean(exp(income))
+  stderr_income <- plotrix::std.error(exp(income))
+  output$MV <- output$col4/income_coeff * mean_income
+  output$lower.95 <- output$MV - stderr_income * 1.96
+  output$upper.95 <- output$MV + stderr_income * 1.96
+  output$ci95 <- paste0("(", as.character(round(output$lower.95,0)), " - ",
+                        as.character(round(output$upper.95,0)), ")")
+  output$MV <- round(output$MV, 0)
+  output <- output %>% dplyr::select(col1, MV, ci95)
+  return(output)
+}
+moneytary_value(impact_summary_death_CS, impact_summary_death_CS_variable_names, tes$log_Median_Household_Income_2018) %>%
+  xlsx::write.xlsx("03_Results/04_09RE_MVMortalityLandCoverCross.xlsx", sheetName = "Sheet1", 
+                   row.names = F)
+moneytary_value(impact_summary_conf_CS, impact_summary_conf_CS_variable_names, tes$log_Median_Household_Income_2018) %>%
+  xlsx::write.xlsx("03_Results/04_10RE_MVPrevalenceLandCoverCross.xlsx", sheetName = "Sheet1", 
+                   row.names = F)
+
+tes$mortality %>% summary()
+
+
+
