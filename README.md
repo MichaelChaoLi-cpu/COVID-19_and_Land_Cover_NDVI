@@ -4,6 +4,9 @@ This is the research on the relationship between COVID-19 and Land Cover as well
 ## Author
 Chao Li, Shunsuke Managi
 
+## Manuscript
+[Natural Land Cover Improves COVID-19 Health Outcome](07_Manuscript/Natural Land Cover Improves COVID-19 Health Outcome.pdf)  
+
 ## Data  
 ### Used in 01_DW_MortalityPrevalenceLandCoverCross_v1.R  
 COVID19 Package: confirmed cases, deaths, population, restrictions information.  
