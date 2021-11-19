@@ -1,5 +1,8 @@
-# COVID-19 and Land Cover as well as NDVI (DP05)
+# Natural Land Cover Improves the COVID-19 Health Outcomes (DP05)
 This is the research on the relationship between COVID-19 and Land Cover as well as monthly NDVI in the USA
+
+## Author
+Chao Li, Shunsuke Managi
 
 ## Data  
 ### Used in 01_DW_MortalityPrevalenceLandCoverCross_v1.R  
@@ -33,6 +36,7 @@ COVID19 Package: confirmed cases, deaths, population, restrictions information.
 [07_AF_OutputSplmImpactFunction_v1.R](04_Code/07_AF_OutputSplmImpactFunction_v1.R): this script is the function to output spml model impacts, which has been stored in the AssistantFunction repo <https://github.com/MichaelChaoLi-cpu/AssistantFuctions>.  
 [08_DW_MortalityPrevalenceMonthlyPanel_v1.R](04_Code/08_DW_MortalityPrevalenceMonthlyPanel_v1.R): This script make the data set, [panel_NDVI_mortality_prevalence_monthly.csv](02_RawData/panel_NDVI_mortality_prevalence_monthly.csv), which includes "stringency_index", "NDVI_perc", "tem_c", "NLT", "confirmed_per1000", and "deaths_per1000". With this **monthly panel data set**, we could perform the panel regressions and even spatial panel regressions.   
 [09_AN_PrevalenceMortalityNDVIMonthlyPanel_v0.R](04_Code/09_AN_PrevalenceMortalityNDVIMonthlyPanel_v0.R): This script mainly perform panel model, including "plm" and "splm", based on the monthly panel data set, [panel_NDVI_mortality_prevalence_monthly.csv](02_RawData/panel_NDVI_mortality_prevalence_monthly.csv). However, they are out of memory. Therefore, aborted!
+[10_VI_DistributionStatistics_v0.R](04_Code/10_VI_DistributionStatistics_v0.R): This script mainly make the figure in the article.[prevalence.png](06_Figure/prevalence.png) and [mortality.png](06_Figure/mortality.png) are to show the spatial distribution of total prevalence and mortality.
   
 ## Workflow  
 **WF.A: 01 -> 03 -> 04 -> END**  
@@ -46,3 +50,10 @@ COVID19 Package: confirmed cases, deaths, population, restrictions information.
 **WF.B: 02 -> 08 -> 09 -> END**  
 Out of memory! Aborted!  
 
+## Contact Us:
+- Email: Prof. Shunsuke Managi <managi@doc.kyushu-u.ac.jp>  
+- Email: Chao Li <chaoli0394@gmail.com>  
+  
+## Term of Use:
+Authors/funders retain copyright (where applicable) of code on this Github repo. 
+This GitHub repo and its contents herein, including data, link to data source, and analysis code that are intended solely for reproducing the results in the manuscript "Contribution of On-Road Transportation to PM2.5" The analyses rely upon publicly available data from multiple sources, that are often updated without advance notice. We hereby disclaim any and all representations and warranties with respect to the site, including accuracy, fitness for use, and merchantability. By using this site, its content, information, and software you agree to assume all risks associated with your use or transfer of information and/or software. You agree to hold the authors harmless from any claims relating to the use of this site.
