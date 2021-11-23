@@ -4,8 +4,11 @@ This is the research on the relationship between COVID-19 and Land Cover as well
 ## Author
 Chao Li, Shunsuke Managi
 
+## Abstract
+Coronavirus disease 2019 (COVID‐19) poses special challenges for societies, as the disease causes millions of deaths. Although the direct prevention measures affect the prevalence and mortality the most, the other indirect factors, including natural environments and economics, could not be neglected. Assessing whether natural land cover impacts COVID-19 health outcomes is an urgent and crucial public health topic. Here, we examine the relationships between natural land cover and the prevalence and mortality of COVID-19 in the United States. A 1% increase of open water or deciduous forest is associated with a 0.004-death and 0.163-conformed-case, or 0.006-death and 0.099-confirmed-case decrease in every 1,000 people. Converting them into monetary value, for the mortality, a 1% increase in open water, deciduous forest, or evergreen forest in a county is equivalent to a 212-, 313-, or 219-USD increase in household income in the long term. Moreover, for the prevalence, a 1% change in open water, deciduous forest, or mixed forest is worth a 382-, 230-, or 650-USD increase in household income. Furthermore, a rational development intensity is also critical to prevent the COVID-19 pandemic. More greenery in the short term could also slash the prevalence and mortality. Our research highlights that societies could prevent other pandemics similar to the COVID-19 and improve public health in the future by adding natural land cover.  
+
 ## Manuscript
-[Natural Land Cover Improves COVID-19 Health Outcome](07_Manuscript/Natural Land Cover Improves COVID-19 Health Outcome.pdf)  
+[Natural Land Cover Improves COVID-19 Health Outcomes](07_Manuscript/NaturalLandCoverImprovesCOVID-19HealthOutcomes.pdf)  
 
 ## Data  
 ### Used in 01_DW_MortalityPrevalenceLandCoverCross_v1.R  
