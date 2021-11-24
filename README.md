@@ -1,5 +1,5 @@
 # Natural Land Cover Improves the COVID-19 Health Outcomes (DP05)
-This is the research on the relationship between COVID-19 and Land Cover as well as monthly NDVI in the USA
+This is the research on the relationships between the COVID-19 health outcome and land cover and NDVI in the USA.
 
 ## Author
 Chao Li, Shunsuke Managi
