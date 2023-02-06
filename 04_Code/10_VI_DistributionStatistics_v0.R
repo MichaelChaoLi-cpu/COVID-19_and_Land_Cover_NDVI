@@ -27,6 +27,7 @@ library(tmaptools)
 library(grid)
 library(rgdal)
 library(tigris)
+library(spdplyr)
 
 load("00_RData/dataset.Rdata")
 
@@ -55,14 +56,17 @@ tes <- dataset %>%
                 winter_rmax_mean, pm25_mean, key_numeric
   ) %>% na.omit()
 us_shape <- readOGR(dsn = "01_Raster\\01_Boundary", layer = "cb_2017_us_county_20m84")
-us_shape <- geo_join(us_shape, tes, 'CountyFIPS', 'key_numeric', how = 'inner')
+us_shape <- geo_join(us_shape, tes, 'CountyFIPS', 'key_numeric', how = 'left')
+#us_shape_back <- readOGR(dsn = "01_Raster\\01_Boundary", layer = "cb_2017_us_county_20m84")
+us_shape <- us_shape %>% filter(STATEFP != '02', STATEFP != '72', STATEFP != '15')
+us_shape$col <- 1
 #plot(us_shape) # now there are 3103 records
 gc() 
 
 # tm set
 title_size = .0001
 legend_title_size = 1
-margin = 0
+margin = 0.005
 
 tmap_mode('plot')
 prj <- get_projection(us_shape,  guess.longlat = FALSE)
@@ -75,12 +79,13 @@ labels_ols = c("0 ~ 10%", "10% ~ 20%", "20% ~ 30%", "30% +")
   tm_polygons(col = 'Emergent_Herbaceous_Wetlands_perc', pal = "-RdYlGn", 
               auto.palette.mapping = FALSE,
               title = "Emergent Herbaceous Wetland Ratio:", border.alpha = 0, 
-              breaks = brk_ols_res, labels	= labels_ols) +
+              breaks = brk_ols_res, labels	= labels_ols, 
+              colorNA = 'grey') +
     tm_shape(us_shape) +
     tm_polygons(lwd = 0.01, alpha = .25) +
     tm_grid(projection = prj, alpha = .25)+ 
     tm_layout(
-      inner.margins = c(margin, margin, margin, margin),
+      inner.margins = c(0.1, margin, margin, margin),
       title.size = title_size, 
       legend.position = c("left", "bottom"),
       main.title.position = c("center", "bottom"),
@@ -98,12 +103,13 @@ labels_ols = c("0 ~ 50", "50 ~ 100", "100 ~ 150", "150 ~ 200", "200 ~ 250", "250
     tm_polygons(col = 'incidence_proportion', pal = "-RdYlGn", 
                 auto.palette.mapping = FALSE,
                 title = "Prevalence (cases/1000):", border.alpha = 0, 
-                breaks = brk_ols_res, labels	= labels_ols) +
+                breaks = brk_ols_res, labels	= labels_ols, 
+                colorNA = 'grey') +
     tm_shape(us_shape) +
     tm_polygons(lwd = 0.01, alpha = .25) +
     tm_grid(projection = prj, alpha = .25)+ 
     tm_layout(
-      inner.margins = c(margin, margin, margin, margin),
+      inner.margins = c(0.1, margin, margin, margin),
       title.size = title_size, 
       legend.position = c("left", "bottom"),
       main.title.position = c("center", "bottom"),
@@ -121,12 +127,13 @@ labels_ols = c("0 ~ 1", "1 ~ 2", "2 ~ 3", "3 ~ 4", "4 ~ 5", "5 +")
     tm_polygons(col = 'mortality', pal = "-RdYlGn", 
                 auto.palette.mapping = FALSE,
                 title = "Mortality (cases/1000):", border.alpha = 0, 
-                breaks = brk_ols_res, labels	= labels_ols) +
+                breaks = brk_ols_res, labels	= labels_ols, 
+                colorNA = 'grey') +
     tm_shape(us_shape) +
     tm_polygons(lwd = 0.01, alpha = .25) +
     tm_grid(projection = prj, alpha = .25)+ 
     tm_layout(
-      inner.margins = c(margin, margin, margin, margin),
+      inner.margins = c(0.1, margin, margin, margin),
       title.size = title_size, 
       legend.position = c("left", "bottom"),
       main.title.position = c("center", "bottom"),
